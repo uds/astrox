@@ -1,0 +1,172 @@
+{"frames": {
+
+"fire17.png":
+{
+	"frame": {"x":124,"y":0,"w":14,"h":31},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":14,"h":31},
+	"sourceSize": {"w":14,"h":31}
+},
+"meteorBrown_big1.png":
+{
+	"frame": {"x":89,"y":195,"w":101,"h":84},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":101,"h":84},
+	"sourceSize": {"w":101,"h":84}
+},
+"meteorBrown_big2.png":
+{
+	"frame": {"x":98,"y":279,"w":120,"h":98},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":120,"h":98},
+	"sourceSize": {"w":120,"h":98}
+},
+"meteorBrown_big3.png":
+{
+	"frame": {"x":0,"y":195,"w":89,"h":82},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":89,"h":82},
+	"sourceSize": {"w":89,"h":82}
+},
+"meteorBrown_big4.png":
+{
+	"frame": {"x":0,"y":279,"w":98,"h":96},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":96},
+	"sourceSize": {"w":98,"h":96}
+},
+"meteorBrown_med1.png":
+{
+	"frame": {"x":183,"y":0,"w":43,"h":43},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":43,"h":43},
+	"sourceSize": {"w":43,"h":43}
+},
+"meteorBrown_med3.png":
+{
+	"frame": {"x":138,"y":0,"w":45,"h":40},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":40},
+	"sourceSize": {"w":45,"h":40}
+},
+"meteorBrown_small1.png":
+{
+	"frame": {"x":96,"y":0,"w":28,"h":28},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":28,"h":28},
+	"sourceSize": {"w":28,"h":28}
+},
+"meteorBrown_small2.png":
+{
+	"frame": {"x":34,"y":0,"w":29,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":29,"h":26},
+	"sourceSize": {"w":29,"h":26}
+},
+"meteorBrown_tiny1.png":
+{
+	"frame": {"x":16,"y":0,"w":18,"h":18},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":18,"h":18},
+	"sourceSize": {"w":18,"h":18}
+},
+"meteorBrown_tiny2.png":
+{
+	"frame": {"x":0,"y":0,"w":16,"h":15},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":16,"h":15},
+	"sourceSize": {"w":16,"h":15}
+},
+"playerLife1_orange.png":
+{
+	"frame": {"x":63,"y":0,"w":33,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":33,"h":26},
+	"sourceSize": {"w":33,"h":26}
+},
+"playerShip1_damage1.png":
+{
+	"frame": {"x":99,"y":43,"w":99,"h":76},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":99,"h":76},
+	"sourceSize": {"w":99,"h":76}
+},
+"playerShip1_damage2.png":
+{
+	"frame": {"x":0,"y":119,"w":99,"h":76},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":99,"h":76},
+	"sourceSize": {"w":99,"h":76}
+},
+"playerShip1_damage3.png":
+{
+	"frame": {"x":99,"y":119,"w":100,"h":76},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":76},
+	"sourceSize": {"w":100,"h":76}
+},
+"playerShip1_orange.png":
+{
+	"frame": {"x":0,"y":43,"w":99,"h":75},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":99,"h":75},
+	"sourceSize": {"w":99,"h":75}
+},
+"shield1.png":
+{
+	"frame": {"x":0,"y":377,"w":133,"h":108},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":133,"h":108},
+	"sourceSize": {"w":133,"h":108}
+},
+"shield2.png":
+{
+	"frame": {"x":0,"y":485,"w":143,"h":119},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":143,"h":119},
+	"sourceSize": {"w":143,"h":119}
+},
+"shield3.png":
+{
+	"frame": {"x":0,"y":604,"w":144,"h":137},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":144,"h":137},
+	"sourceSize": {"w":144,"h":137}
+}},
+"animations": {
+	"meteorBrown_big": ["meteorBrown_big1.png","meteorBrown_big2.png","meteorBrown_big3.png","meteorBrown_big4.png"],
+	"meteorBrown_med": ["meteorBrown_med1.png","meteorBrown_med3.png"],
+	"meteorBrown_small": ["meteorBrown_small1.png","meteorBrown_small2.png"],
+	"meteorBrown_tiny": ["meteorBrown_tiny1.png","meteorBrown_tiny2.png"],
+	"playerShip1_damage": ["playerShip1_damage1.png","playerShip1_damage2.png","playerShip1_damage3.png"],
+	"shield": ["shield1.png","shield2.png","shield3.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.1",
+	"image": "game.png",
+	"format": "RGBA8888",
+	"size": {"w":226,"h":741},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:ea61ff1f9587ed997497f7069444b0a1:024c30a72bf4e3bbfeb38b9c4ec2c460:fc2835210f98bae8e8c1b7f0a84c9321$"
+}
+}

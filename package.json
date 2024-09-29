@@ -1,0 +1,22 @@
+{
+  "name": "tails",
+  "dependencies": {
+    "pixi.js": "7.4.2",
+    "@pixi/layout": "1.0.1",
+    "@pixi/sprite-tiling": "7.4.2",
+    "@pixi/mesh-extras": "7.4.2",
+    "@pixi/ui": "1.1.5",
+    "@pixi/filter-drop-shadow": "5.2.0",
+    "pixi-keyboard": "1.0.0",
+    "stats-js": "1.0.1"
+  },
+  "devDependencies": {
+    "shadow-cljs": "2.28.15"
+  },
+  "scripts": {
+    "watch": "shadow-cljs watch astrox test",
+    "release": "shadow-cljs release astrox",
+    "server": "shadow-cljs server",
+    "report": "shadow-cljs run shadow.cljs.build-report astrox target/build-report.html"
+  }
+}

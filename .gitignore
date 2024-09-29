@@ -1,0 +1,9 @@
+/.calva
+/.clj-kondo
+/.shadow-cljs
+/.lsp
+
+/node_modules
+/target
+
+**/resources/public/js

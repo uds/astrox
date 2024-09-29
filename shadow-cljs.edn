@@ -1,0 +1,23 @@
+{:dependencies [[orchestra "2021.01.01-1"]
+                ;; dev
+                [binaryage/devtools "1.0.7"]]
+
+ :source-paths ["dev",
+                "src",
+                "test"]
+
+ :nrepl        {:port 8778}
+
+ :builds       {:astrox {:target     :browser
+                         :output-dir "resources/public/js/compiled"
+                         :asset-path "/js/compiled"
+                         :modules    {:main {:init-fn astrox.core/start}}
+                         :dev        {:modules {:main {:init-fn  astrox.core-dev/start
+                                                       :preloads [cljs.user]}}}
+                         :devtools   {:http-root "resources/public"
+                                      :http-port 8282}}
+
+                :test   {:target   :browser-test
+                         :test-dir "target/test"
+                         :devtools {:http-root "target/test"
+                                    :http-port 8283}}}}
