@@ -9,15 +9,15 @@
  :nrepl        {:port 8778}
 
  :builds       {:astrox {:target     :browser
-                         :output-dir "resources/public/js/compiled"
-                         :asset-path "/js/compiled"
+                         :output-dir "target/app/js"
+                         :asset-path "/js"
                          :modules    {:main {:init-fn astrox.core/start}}
                          :dev        {:modules {:main {:init-fn  astrox.core-dev/start
-                                                       :preloads [cljs.user]}}}
-                         :devtools   {:http-root "resources/public"
-                                      :http-port 8282}}
+                                                       :preloads [cljs.user]}}}}
 
                 :test   {:target   :browser-test
                          :test-dir "target/test"
-                         :devtools {:http-root "target/test"
-                                    :http-port 8283}}}}
+                         :dev-http {8283 {:root "target/test"}}}}
+
+ :dev-http     {8282 {:roots ["resources/public", "target/app"]}
+                8283 {:root "target/test"}}}
