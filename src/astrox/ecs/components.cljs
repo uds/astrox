@@ -9,7 +9,11 @@
 ;; -------------------------------------------------------------------------------------------------------
 ;; Collider
 
-;; This component is used to define the collision properties of an entity.
+(s/def ::position ::v/vector2d)
+(s/def ::size ::v/vector2d)
+(s/def ::shape #{:circle :rectangle})
+
+(s/fdef ->Collider :args (s/cat :position ::position :size ::size :shape ::shape) :ret map?)
 ;; It includes the shape and size of the collider.
 (defrecord Collider [position  ;; position of the collider; 2D vector
                      size      ;; size of the collider; 2D vector
