@@ -6,20 +6,6 @@
             [tails.math.physics :as p]
             [tails.pixi.core :as px]))
 
-;; -------------------------------------------------------------------------------------------------------
-;; Collider
-
-
-(s/def ::position ::v/vector2d)
-(s/def ::size ::v/vector2d)
-(s/def ::shape #{:circle :rectangle})
-
-(s/fdef ->Collider :args (s/cat :position ::position :size ::size :shape ::shape) :ret map?)
-
-;; It includes the shape and size of the collider.
-(defrecord Collider [position  ;; position of the collider; 2D vector
-                     size      ;; size of the collider; 2D vector
-                     shape])   ;; shape of the collider; e.g., :circle, :rectangle
 
 
 ;; -------------------------------------------------------------------------------------------------------
@@ -112,3 +98,18 @@
            
           fields)
    (map->RigidBody)))
+
+;; -------------------------------------------------------------------------------------------------------
+;; Collider
+
+
+(s/def ::position ::v/vector2d)
+(s/def ::size ::v/vector2d)
+(s/def ::shape #{:circle :rectangle})
+
+(s/fdef ->Collider :args (s/cat :position ::position :size ::size :shape ::shape) :ret map?)
+
+;; It includes the shape and size of the collider.
+(defrecord Collider [position  ;; position of the collider; 2D vector
+                     size      ;; size of the collider; 2D vector
+                     shape])   ;; shape of the collider; e.g., :circle, :rectangle
