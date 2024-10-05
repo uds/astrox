@@ -4,7 +4,16 @@
   (:require [clojure.spec.alpha :as s]
             [tails.math.vector2d :as v]
             [tails.math.physics :as p]
-            [tails.pixi.core :as px]            ))
+            [tails.pixi.core :as px]))
+
+;; -------------------------------------------------------------------------------------------------------
+;; Collider
+
+;; This component is used to define the collision properties of an entity.
+;; It includes the shape and size of the collider.
+(defrecord Collider [position  ;; position of the collider; 2D vector
+                     size      ;; size of the collider; 2D vector
+                     shape])   ;; shape of the collider; e.g., :circle, :rectangle
 
 
 ;; -------------------------------------------------------------------------------------------------------
