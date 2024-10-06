@@ -83,7 +83,7 @@
 
 (deftest to-approx
   (is (= (v/vec2d 1.23457 4.56789) (v/to-approx (v/vec2d 1.2345678 4.5678912))))
-  (is (= (v/vec2d 1.0 5.0) (v/to-approx (v/vec2d 1.00001 5.00001)))))
+  (is (= (v/vec2d 1.0 5.0) (v/to-approx (v/vec2d 1.000001 5.000001)))))
 
 (deftest to-fixed
   ;; Basic rounding
