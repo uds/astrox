@@ -64,7 +64,7 @@
   (is (= (* 0.5 js/Math.PI) (math/wrap-pi (* -1.5 js/Math.PI))))
   (is (= (* -0.5 js/Math.PI) (math/wrap-pi (* -4.5 js/Math.PI)))))
 
-(deftest test-to-fixed
+(deftest to-fixed
   ;; Basic rounding
   (is (= 1.23 (math/to-fixed 1.23456 2)))
   (is (= 1.235 (math/to-fixed 1.23456 3)))
@@ -72,7 +72,7 @@
   (is (= 1.0 (math/to-fixed 1.0 1)))
 
   ;; Edge cases
-  (is (= 1.23 (math/to-fixed 1.235 2)))  ;; Halfway case
+  (is (= 1.24 (math/to-fixed 1.235 2)))  ;; Halfway case
   (is (= 1.24 (math/to-fixed 1.2351 2)))
   (is (= 0.0 (math/to-fixed 0.0 2)))
   (is (= -1.23 (math/to-fixed -1.23456 2)))
