@@ -23,7 +23,8 @@
 (def right (vec2d 1 0))
 
 
-(s/fdef eq :args (s/cat :v1 ::vector2d, :v2 ::vector2d-or-scalar, :epsilon (s/? number?)), :ret boolean?)
+(s/fdef eq :args (s/alt :two-args (s/cat :v1 ::vector2d, :v2 ::vector2d-or-scalar)
+                        :three-args (s/cat :v1 ::vector2d, :v2 ::vector2d-or-scalar, :epsilon number?)), :ret boolean?)
 
 (defn eq
   "Returns true if the vectors are approximately equal within the specified tolerance epsilon"
