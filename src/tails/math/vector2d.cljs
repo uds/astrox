@@ -165,11 +165,7 @@
 (defn round-to-0
   "Rounds vector components to zero if they are within the specified epsilon."
   [{x :x y :y} epsilon]
-  (let [round-component (fn [component]
-                          (if (<= (js/Math.abs component) epsilon)
-                            0
-                            component))]
-    (vec2d (round-component x) (round-component y))))
+  (vec2d (math/round-to-0 x epsilon) (math/round-to-0 y epsilon)))
 
 (s/fdef rand-in-circle :args (s/alt :1 (s/cat :center ::vector2d, :radius number? :rand-fn fn?)
                                     :2 (s/cat :center ::vector2d, :radius number?))
