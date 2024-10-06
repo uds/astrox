@@ -110,7 +110,7 @@
   (is (= (v/vec2d 0 0) (v/round-to-0 (v/vec2d 0.0001 0.0001) 0.001)))
   (is (= (v/vec2d 0.0001 0) (v/round-to-0 (v/vec2d 0.0001 0.0001) 0.00005)))
   (is (= (v/vec2d 0.1 0.2) (v/round-to-0 (v/vec2d 0.1 0.2) 0.05)))
-  (is (= (v/vec2d 0 0.2) (v/round-to-0 (v/vec2d 0.00001 0.2) 0.0001))))
+  (is (= (v/vec2d 0 0.2) (v/round-to-0 (v/vec2d 0.00001 0.2) 0.0001)))
   (let [c (v/vec2d 2 3)
         r 5]
     (dotimes [_ 100]
