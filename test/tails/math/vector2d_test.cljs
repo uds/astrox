@@ -10,7 +10,9 @@
   (is (v/eq (v/vec2d 0.000001 0.000001) 0))
   (is (not (v/eq (v/vec2d 0.01 0.01) 0)))
   (is (v/eq (v/vec2d 0.000001 0.000001) (v/vec2d 0.00000123 0.00000123)))
-  (is (not (v/eq (v/vec2d 0.000001 0.000001) (v/vec2d 0.001 0.001)))))
+  (is (not (v/eq (v/vec2d 0.000001 0.000001) (v/vec2d 0.001 0.001))))
+  (is (v/eq (v/vec2d 0.0001 0.0001) (v/vec2d 0.0002 0.0002) 0.0002))
+  (is (not (v/eq (v/vec2d 0.0001 0.0001) (v/vec2d 0.0002 0.0002) 0.00005))))
 
 (deftest add
   (is (= (v/vec2d 4 6) (v/add (v/vec2d 1 2) (v/vec2d 3 4))))
