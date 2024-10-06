@@ -73,6 +73,18 @@
   (is (= -135 (math/rad->deg (v/angle (v/vec2d 5 -5)))))
   (is (= 135 (math/rad->deg (v/angle (v/vec2d -5 -5))))))
 
+(deftest vec2d
+  (is (= {:x 1, :y 2} (v/vec2d 1 2)))
+  (is (= {:x -1, :y -2} (v/vec2d -1 -2))))
+
+(deftest distance-squared
+  (is (= 25 (v/distance-squared (v/vec2d 1 1) (v/vec2d 4 5))))
+  (is (= 25 (v/distance-squared (v/vec2d 4 5) (v/vec2d 1 1)))))
+
+(deftest to-approx
+  (is (= (v/vec2d 1.23457 4.56789) (v/to-approx (v/vec2d 1.2345678 4.5678912))))
+  (is (= (v/vec2d 1.0 5.0) (v/to-approx (v/vec2d 1.00001 5.00001)))))
+
 (deftest to-fixed
   ;; Basic rounding
   (is (= (v/vec2d 1.23 4.57) (v/to-fixed (v/vec2d 1.23456 4.56789) 2)))
