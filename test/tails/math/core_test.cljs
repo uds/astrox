@@ -82,3 +82,22 @@
   (is (= 1.2346 (math/to-fixed 1.23456 4)))
   (is (= 1.0 (math/to-fixed 1.0 0)))
   (is (= 1.0 (math/to-fixed 1.0001 0))))
+
+(deftest floor
+  (is (= 1 (math/floor 1.9)))
+  (is (= -2 (math/floor -1.1)))
+  (is (= 0 (math/floor 0.5))))
+
+(deftest to-approx
+  (is (= 1.23457 (math/to-approx 1.2345678)))
+  (is (= 1.0 (math/to-approx 1.000001))))
+
+(deftest create-rand-fn
+  (let [rand-fn (math/create-rand-fn "seed")]
+    (is (<= 0 (rand-fn) 1))
+    (is (not= (rand-fn) (rand-fn)))))
+
+(deftest rand-num
+  (is (<= 0 (math/rand-num) 1))
+  (is (<= 0 (math/rand-num 5) 5))
+  (is (<= 10 (math/rand-num 10 20) 20)))
