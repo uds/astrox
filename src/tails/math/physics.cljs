@@ -75,11 +75,11 @@
         position         (v/add position (v/mul velocity delta-time))
         orientation      (+ orientation (* ang-velocity delta-time))]
     
-    ;; using "round-to-0" when storing the new velocity values to stop recalculations of the bodies that are changing 
-    ;; ever so slightly on each step
     (assoc rigid-body
            :position         position
            :orientation      orientation
+           ;; using "round-to-0" when storing the new velocity values to stop recalculations of the bodies that are changing 
+           ;; ever so slightly on each step
            :velocity         (v/zero-if-near velocity 1)
            :angular-velocity (math/zero-if-near ang-velocity 0.01)
            ;; this is an impulse based integration, need to reset forces after the computation step
