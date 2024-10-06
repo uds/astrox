@@ -72,14 +72,10 @@ Only makes sense to do if reactions are not always disposed by the framework, e.
 + make dedicated game stage container:
 - make it and all children non-interactive -> (set! (.-interactiveChildren xxx) false)
 
-- physics integration-step - round position and orientation to avoid ECS from updating rigid-body on every step
-  -> add eq to RigidBody so it will not trigger re-evaluation 
-
 
 - disable mouse cursor for game screen
     (set! (.-cursor screen) "none")
     (set! (.-eventMode screen) "static")
-
 
 - Touch is not working for buttons?
 
