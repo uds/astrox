@@ -107,4 +107,4 @@
   (is (= 0.0001 (math/round-to-0 0.0001 0.00005)))
   (is (= 0.1 (math/round-to-0 0.1 0.05)))
   (is (= 0 (math/round-to-0 0.01 0.1)))
-  (is (= 0 0.2 (math/round-to-0 0.00001 0.2) 0.0001)))
+  (is (= 0 0 (math/round-to-0 0.00001 0.2))))

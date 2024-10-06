@@ -75,8 +75,6 @@ Only makes sense to do if reactions are not always disposed by the framework, e.
 - physics integration-step - round position and orientation to avoid ECS from updating rigid-body on every step
   -> add eq to RigidBody so it will not trigger re-evaluation 
 
-- use drag instead of dumping?
-  https://discussions.unity.com/t/how-drag-is-calculated-by-unity-engine/97622/2  
 
 - disable mouse cursor for game screen
     (set! (.-cursor screen) "none")

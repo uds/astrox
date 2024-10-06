@@ -167,6 +167,7 @@
   [{x :x y :y} epsilon]
   (vec2d (math/round-to-0 x epsilon) (math/round-to-0 y epsilon)))
 
+
 (s/fdef rand-in-circle :args (s/alt :1 (s/cat :center ::vector2d, :radius number? :rand-fn fn?)
                                     :2 (s/cat :center ::vector2d, :radius number?))
   :ret ::vector2d)
