@@ -108,12 +108,13 @@
 
 (deftest round-to-0
   (is (= (v/vec2d 0 0) (v/round-to-0 (v/vec2d 0.0001 0.0001) 0.001)))
-  (is (= (v/vec2d 0.0001 0) (v/round-to-0 (v/vec2d 0.0001 0.0001) 0.00005)))
+  (is (= (v/vec2d 0.0001 0.0001) (v/round-to-0 (v/vec2d 0.0001 0.0001) 0.00005)))
   (is (= (v/vec2d 0.1 0.2) (v/round-to-0 (v/vec2d 0.1 0.2) 0.05)))
+  (is (= (v/vec2d 0 0) (v/round-to-0 (v/vec2d 0.01 0.02) 0.1)))
   (is (= (v/vec2d 0 0.2) (v/round-to-0 (v/vec2d 0.00001 0.2) 0.0001))))
 
 (deftest rand-in-circle
   (let [c (v/vec2d 2 3)
         r 5]
     (dotimes [_ 100]
-      (is (>= r (v/distance (v/rand-in-circle c r) c)))))
+      (is (>= r (v/distance (v/rand-in-circle c r) c))))))
