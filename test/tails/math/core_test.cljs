@@ -102,9 +102,9 @@
   (is (<= 0 (math/rand-num 5) 5))
   (is (<= 10 (math/rand-num 10 20) 20)))
 
-(deftest round-to-0
-  (is (= 0 (math/round-to-0 0.0001 0.001)))
-  (is (= 0.0001 (math/round-to-0 0.0001 0.00005)))
-  (is (= 0.1 (math/round-to-0 0.1 0.05)))
-  (is (= 0 (math/round-to-0 0.01 0.1)))
-  (is (= 0 0 (math/round-to-0 0.00001 0.2))))
+(deftest zero-if-near
+  (is (= 0 (math/zero-if-near 0.0001 0.001)))
+  (is (= 0.0001 (math/zero-if-near 0.0001 0.00005)))
+  (is (= 0.1 (math/zero-if-near 0.1 0.05)))
+  (is (= 0 (math/zero-if-near 0.01 0.1)))
+  (is (= 0 0 (math/zero-if-near 0.00001 0.2))))

@@ -78,8 +78,8 @@
   ([n] (* (rand-num*) n))
   ([from to] (+ from (* (rand-num*) (- to from)))))
 
-(defn round-to-0
-  "Rounds a number to zero if it is within the specified epsilon."
+(defn zero-if-near
+  "Zeros a number if it is within the specified epsilon."
   [value epsilon]
   (if (<= (js/Math.abs value) epsilon)
     0
