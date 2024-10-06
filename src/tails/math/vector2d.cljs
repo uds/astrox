@@ -140,14 +140,13 @@
 
 (s/fdef rotate :args (s/cat :v1 ::vector2d, :angle number?), :ret ::vector2d)
 
-;; TODO: consider to use Mat22 matrix for vector rotations 
-;; (see https://gamedevelopment.tutsplus.com/how-to-create-a-custom-2d-physics-engine-oriented-rigid-bodies--gamedev-8032t)
 (defn rotate
   "Rotate vector by a specified angle. Angle is in radians."
   [{x :x, y :y}, angle]
-  {:x (- (* x (Math/cos angle)) (* y (Math/sin angle)))
-   :y (+ (* x (Math/sin angle)) (* y (Math/cos angle)))})
-
+  (let [cos (Math/cos angle)
+        sin (Math/sin angle)]
+    {:x (- (* x cos) (* y sin))
+     :y (+ (* x sin) (* y cos))}))
 
 (s/fdef angle :args (s/cat :v1 ::vector2d), :ret number?)
 
