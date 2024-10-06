@@ -61,7 +61,6 @@
   (let [linear-damping-k (dumping-k linear-damping)
         ang-damping-k    (dumping-k angular-damping)
         
-      
         ;; using Semi-implicit Euler integration method, as described here: https://gafferongames.com/post/integration_basics/
 
         ;; linear velocity
@@ -76,17 +75,13 @@
         position         (v/add position (v/mul velocity delta-time))
         orientation      (+ orientation (* ang-velocity delta-time))]
     
-   
-    ;; FIXME: the approximation does not work reliably - it does not stop quickly and it leaves velocity > 0
-    ;; TODO: replace to-approx with RigidBody.eq?
-
-    ;; using to-approx when storing the new values to stop recalculations of the bodies that are changing 
+    ;; using "round-to-0" when storing the new velocity values to stop recalculations of the bodies that are changing 
     ;; ever so slightly on each step
     (assoc rigid-body
-           :position         (v/to-approx position)
-           :orientation      (math/to-approx orientation)
-           :velocity         (v/to-approx velocity)
-           :angular-velocity (math/to-approx ang-velocity)
+           :position         position
+           :orientation      orientation
+           :velocity         (v/zero-if-near velocity 1)
+           :angular-velocity (math/zero-if-near ang-velocity 0.01)
            ;; this is an impulse based integration, need to reset forces after the computation step
            :force            v/zero
            :torque           0)))
