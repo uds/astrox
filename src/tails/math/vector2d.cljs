@@ -160,12 +160,12 @@
   (- (js/Math.atan2 x y)))
 
 
-(s/fdef round-to-0 :args (s/cat :v ::vector2d, :epsilon number?), :ret ::vector2d)
+(s/fdef zero-if-near :args (s/cat :v ::vector2d, :epsilon number?), :ret ::vector2d)
 
-(defn round-to-0
+(defn zero-if-near
   "Rounds vector components to zero if they are within the specified epsilon."
   [{x :x y :y} epsilon]
-  (vec2d (math/round-to-0 x epsilon) (math/round-to-0 y epsilon)))
+  (vec2d (math/zero-if-near x epsilon) (math/zero-if-near y epsilon)))
 
 
 (s/fdef rand-in-circle :args (s/alt :1 (s/cat :center ::vector2d, :radius number? :rand-fn fn?)
