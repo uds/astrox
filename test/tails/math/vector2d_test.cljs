@@ -73,6 +73,25 @@
   (is (= -135 (math/rad->deg (v/angle (v/vec2d 5 -5)))))
   (is (= 135 (math/rad->deg (v/angle (v/vec2d -5 -5))))))
 
+(deftest to-fixed
+  ;; Basic rounding
+  (is (= (v/vec2d 1.23 4.57) (v/to-fixed (v/vec2d 1.23456 4.56789) 2)))
+  (is (= (v/vec2d 1.235 4.568) (v/to-fixed (v/vec2d 1.23456 4.56789) 3)))
+  (is (= (v/vec2d 1.2 4.6) (v/to-fixed (v/vec2d 1.23456 4.56789) 1)))
+  (is (= (v/vec2d 1.0 5.0) (v/to-fixed (v/vec2d 1.0 5.0) 1)))
+
+  ;; Edge cases
+  (is (= (v/vec2d 1.24 4.57) (v/to-fixed (v/vec2d 1.235 4.567) 2)))  ;; Halfway case
+  (is (= (v/vec2d 1.24 4.57) (v/to-fixed (v/vec2d 1.2351 4.5671) 2)))
+  (is (= (v/vec2d 0.0 0.0) (v/to-fixed (v/vec2d 0.0 0.0) 2)))
+  (is (= (v/vec2d -1.23 -4.57) (v/to-fixed (v/vec2d -1.23456 -4.56789) 2)))
+
+  ;; Precision
+  (is (= (v/vec2d 1.23456 4.56789) (v/to-fixed (v/vec2d 1.23456 4.56789) 5)))
+  (is (= (v/vec2d 1.2346 4.5679) (v/to-fixed (v/vec2d 1.23456 4.56789) 4)))
+  (is (= (v/vec2d 1.0 5.0) (v/to-fixed (v/vec2d 1.0 5.0) 0)))
+  (is (= (v/vec2d 1.0 5.0) (v/to-fixed (v/vec2d 1.0001 5.0001) 0))))
+
 (deftest rand-in-circle
   (let [c (v/vec2d 2 3)
         r 5]
