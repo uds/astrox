@@ -7,7 +7,7 @@
 (s/def ::position ::v/vector2d)
 (s/def ::radius number?)
 (s/def ::size ::v/vector2d)
-(s/def ::entity any?)
+(s/def ::entity-id any?)
   
 
 (s/fdef circle-circle-collision?
@@ -48,7 +48,7 @@
 
 (s/fdef broad-phase
   :args (s/cat :world any?)
-  :ret (s/coll-of (s/tuple ::entity ::entity)))
+  :ret (s/coll-of (s/tuple ::entity-id ::entity-id)))
 
 (defn broad-phase
   "Identifies potential collisions using spatial partitioning.
@@ -62,8 +62,8 @@
       [e1 e2])))
 
 (s/fdef narrow-phase
-  :args (s/cat :world any? :potential-collisions (s/coll-of (s/tuple ::entity ::entity)))
-  :ret (s/coll-of (s/tuple ::entity ::entity)))
+  :args (s/cat :world any? :potential-collisions (s/coll-of (s/tuple ::entity-id ::entity-id)))
+  :ret (s/coll-of (s/tuple ::entity-id ::entity-id)))
 
 (defn narrow-phase
   "Performs detailed collision checks on potential collisions.
@@ -110,7 +110,7 @@
       (v/zero)))) ;; Default to zero vector if no collision
 
 (s/fdef calculate-repulsion
-  :args (s/cat :entity1 ::entity :entity2 ::entity :collision-depth ::v/vector2d)
+  :args (s/cat :entity1 ::entity-id :entity2 ::entity-id :collision-depth ::v/vector2d)
   :ret nil?)
 
 (defn calculate-repulsion
@@ -122,7 +122,7 @@
   )
 
 (s/fdef resolve-collisions
-  :args (s/cat :world any? :collisions (s/coll-of (s/tuple ::entity ::entity)))
+  :args (s/cat :world any? :collisions (s/coll-of (s/tuple ::entity-id ::entity-id)))
   :ret nil?)
 
 (defn resolve-collisions
