@@ -67,7 +67,7 @@
                                   (v/mul direction depth))
       [:circle :rectangle] ;; Implement logic for circle-rectangle collision depth
       [:rectangle :circle] ;; Implement logic for rectangle-circle collision depth
-      (v/zero))) ;; Default to zero vector if no collision
+      (v/zero)))) ;; Default to zero vector if no collision
 
 (defn calculate-repulsion
   "Calculates and applies repulsion forces based on collision depth."
