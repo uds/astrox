@@ -4,25 +4,29 @@
             [tails.ecs.core :as ecs]))
 
 (defn circle-circle-collision?
-  "Detects collision between two circles."
+  "Detects collision between two circles.
+   Returns a boolean indicating if a collision occurred."
   [pos1 radius1 pos2 radius2]
   (let [distance (v/distance pos1 pos2)]
     (< distance (+ radius1 radius2))))
 
 (defn rectangle-rectangle-collision?
-  "Detects collision between two rectangles."
+  "Detects collision between two rectangles.
+   Returns a boolean indicating if a collision occurred."
   [{x1 :x y1 :y :as _pos1} {w1 :x h1 :y :as _size1} {x2 :x y2 :y :as _pos2} {w2 :x h2 :y :as _size2}]
   (and (< (Math/abs (- x1 x2)) (+ (/ w1 2) (/ w2 2)))
        (< (Math/abs (- y1 y2)) (+ (/ h1 2) (/ h2 2)))))
 
 (defn circle-rectangle-collision?
-  "Detects collision between a circle and a rectangle."
+  "Detects collision between a circle and a rectangle.
+   Returns a boolean indicating if a collision occurred."
   [circle-pos circle-radius rect-pos rect-size]
   ;; Implement logic for circle-rectangle collision detection
   )
 
 (defn broad-phase
-  "Identifies potential collisions using spatial partitioning."
+  "Identifies potential collisions using spatial partitioning.
+   Returns a sequence of entity pairs that may collide."
   [world]
   (let [entities (ecs/entities-with-component world c/Collider)]
     ;; Simple broad phase using pairwise comparison
@@ -32,7 +36,8 @@
       [e1 e2])))
 
 (defn narrow-phase
-  "Performs detailed collision checks on potential collisions."
+  "Performs detailed collision checks on potential collisions.
+   Returns a sequence of entity pairs that are actually colliding."
   [world potential-collisions]
   (filter (fn [[e1 e2]]
             (let [collider1 (ecs/component world e1 c/Collider)
@@ -50,7 +55,8 @@
           potential-collisions))
 
 (defn calculate-collision-depth
-  "Calculates the depth of the collision between two colliders."
+  "Calculates the depth of the collision between two colliders.
+   Returns a vector representing the collision depth and direction."
   [collider1 collider2]
   (let [pos1 (.-position collider1)
         size1 (.-size collider1)
@@ -70,14 +76,16 @@
       (v/zero)))) ;; Default to zero vector if no collision
 
 (defn calculate-repulsion
-  "Calculates and applies repulsion forces based on collision depth."
+  "Calculates and applies repulsion forces based on collision depth.
+   Returns nil as it performs side effects on the entities."
   [entity1 entity2 collision-depth]
   ;; Calculate and apply repulsion forces based on collision depth
   ;; Update the RigidBody components of the entities
   )
 
 (defn resolve-collisions
-  "Resolves detected collisions by applying repulsion forces."
+  "Resolves detected collisions by applying repulsion forces.
+   Returns nil as it performs side effects on the world state."
   [world collisions]
   (doseq [[e1 e2] collisions]
     (let [collider1 (ecs/component world e1 c/Collider)
