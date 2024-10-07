@@ -40,7 +40,8 @@
               (case [(.-shape collider1) (.-shape collider2)]
                 [:circle :circle] (circle-circle-collision? (.-position collider1) (.-size collider1) (.-position collider2) (.-size collider2))
                 [:rectangle :rectangle] (rectangle-rectangle-collision? (.-position collider1) (.-size collider1) (.-position collider2) (.-size collider2))
-                ;; Add more cases as needed
+                [:circle :rectangle] (circle-rectangle-collision? (.-position collider1) (.-size collider1) (.-position collider2) (.-size collider2))
+                [:rectangle :circle] (circle-rectangle-collision? (.-position collider2) (.-size collider2) (.-position collider1) (.-size collider1))
                 false)))
           potential-collisions))
 
