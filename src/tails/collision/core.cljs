@@ -82,6 +82,5 @@
   (doseq [[e1 e2] collisions]
     (let [collider1 (ecs/component world e1 c/Collider)
           collider2 (ecs/component world e2 c/Collider)
-          ;; Calculate collision depth and apply repulsion
-          collision-depth 1] ;; Placeholder for actual collision depth calculation
+          collision-depth (calculate-collision-depth collider1 collider2)]
       (calculate-repulsion e1 e2 collision-depth))))
