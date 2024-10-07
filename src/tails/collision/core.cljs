@@ -2,7 +2,7 @@
   (:require [clojure.spec.alpha :as s]
             [tails.math.vector2d :as v]
             [astrox.ecs.components :as c]
-            [tails.ecs.core :as ecs :refer [::world ::entity-id]]))
+            [tails.ecs.core :as ecs]))
 
 (s/def ::position ::v/vector2d)
 (s/def ::radius number?)
@@ -46,7 +46,7 @@
 
 
 (s/fdef broad-phase
-  :args (s/cat :world ::world)
+  :args (s/cat :world ::ecs/world)
   :ret (s/coll-of (s/tuple ::ecs/entity-id ::ecs/entity-id)))
 
 (defn broad-phase
@@ -60,8 +60,9 @@
           :when (not= e1 e2)]
       [e1 e2])))
 
+
 (s/fdef narrow-phase
-  :args (s/cat :world ::world :potential-collisions (s/coll-of (s/tuple ::ecs/entity-id ::ecs/entity-id)))
+  :args (s/cat :world ::ecs/world :potential-collisions (s/coll-of (s/tuple ::ecs/entity-id ::ecs/entity-id)))
   :ret (s/coll-of (s/tuple ::ecs/entity-id ::ecs/entity-id)))
 
 (defn narrow-phase
@@ -82,6 +83,7 @@
                 [:rectangle :circle] (circle-rectangle-collision? pos2 size2 pos1 size1)
                 false)))
           potential-collisions))
+
 
 (s/fdef calculate-collision-depth
   :args (s/cat :collider1 any? :collider2 any?)
@@ -108,8 +110,9 @@
       [:rectangle :circle] ;; Implement logic for rectangle-circle collision depth
       (v/zero)))) ;; Default to zero vector if no collision
 
+
 (s/fdef calculate-repulsion
-  :args (s/cat :entity1 ::entity-id :entity2 ::entity-id :collision-depth ::v/vector2d)
+  :args (s/cat :entity1 ::ecs/entity-id :entity2 ::ecs/entity-id :collision-depth ::v/vector2d)
   :ret nil?)
 
 (defn calculate-repulsion
@@ -120,8 +123,9 @@
   ;; Update the RigidBody components of the entities
   )
 
+
 (s/fdef resolve-collisions
-  :args (s/cat :world ::world :collisions (s/coll-of (s/tuple ::ecs/entity-id ::ecs/entity-id)))
+  :args (s/cat :world ::ecs/world :collisions (s/coll-of (s/tuple ::ecs/entity-id ::ecs/entity-id)))
   :ret nil?)
 
 (defn resolve-collisions
