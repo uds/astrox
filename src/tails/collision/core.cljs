@@ -44,6 +44,13 @@
                 false)))
           potential-collisions))
 
+(defn calculate-repulsion
+  "Calculates and applies repulsion forces based on collision depth."
+  [entity1 entity2 collision-depth]
+  ;; Calculate and apply repulsion forces based on collision depth
+  ;; Update the RigidBody components of the entities
+  )
+
 (defn resolve-collisions
   "Resolves detected collisions by applying repulsion forces."
   [world collisions]
@@ -53,10 +60,3 @@
           ;; Calculate collision depth and apply repulsion
           collision-depth 1] ;; Placeholder for actual collision depth calculation
       (calculate-repulsion e1 e2 collision-depth))))
-
-(defn calculate-repulsion
-  "Calculates and applies repulsion forces based on collision depth."
-  [entity1 entity2 collision-depth]
-  ;; Calculate and apply repulsion forces based on collision depth
-  ;; Update the RigidBody components of the entities
-  )
