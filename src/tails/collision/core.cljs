@@ -2,12 +2,11 @@
   (:require [clojure.spec.alpha :as s]
             [tails.math.vector2d :as v]
             [astrox.ecs.components :as c]
-            [tails.ecs.core :as ecs]))
+            [tails.ecs.core :as ecs :refer [::world ::entity-id]]))
 
 (s/def ::position ::v/vector2d)
 (s/def ::radius number?)
 (s/def ::size ::v/vector2d)
-(s/def ::entity-id any?)
   
 
 (s/fdef circle-circle-collision?
@@ -47,8 +46,8 @@
 
 
 (s/fdef broad-phase
-  :args (s/cat :world any?)
-  :ret (s/coll-of (s/tuple ::entity-id ::entity-id)))
+  :args (s/cat :world ::world)
+  :ret (s/coll-of (s/tuple ::ecs/entity-id ::ecs/entity-id)))
 
 (defn broad-phase
   "Identifies potential collisions using spatial partitioning.
@@ -62,8 +61,8 @@
       [e1 e2])))
 
 (s/fdef narrow-phase
-  :args (s/cat :world any? :potential-collisions (s/coll-of (s/tuple ::entity-id ::entity-id)))
-  :ret (s/coll-of (s/tuple ::entity-id ::entity-id)))
+  :args (s/cat :world ::world :potential-collisions (s/coll-of (s/tuple ::ecs/entity-id ::ecs/entity-id)))
+  :ret (s/coll-of (s/tuple ::ecs/entity-id ::ecs/entity-id)))
 
 (defn narrow-phase
   "Performs detailed collision checks on potential collisions.
@@ -122,7 +121,7 @@
   )
 
 (s/fdef resolve-collisions
-  :args (s/cat :world any? :collisions (s/coll-of (s/tuple ::entity-id ::entity-id)))
+  :args (s/cat :world ::world :collisions (s/coll-of (s/tuple ::ecs/entity-id ::ecs/entity-id)))
   :ret nil?)
 
 (defn resolve-collisions
