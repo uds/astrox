@@ -36,12 +36,16 @@
   [world potential-collisions]
   (filter (fn [[e1 e2]]
             (let [collider1 (ecs/component world e1 c/Collider)
-                  collider2 (ecs/component world e2 c/Collider)]
+                  collider2 (ecs/component world e2 c/Collider)
+                  pos1 (.-position collider1)
+                  size1 (.-size collider1)
+                  pos2 (.-position collider2)
+                  size2 (.-size collider2)]
               (case [(.-shape collider1) (.-shape collider2)]
-                [:circle :circle] (circle-circle-collision? (.-position collider1) (.-size collider1) (.-position collider2) (.-size collider2))
-                [:rectangle :rectangle] (rectangle-rectangle-collision? (.-position collider1) (.-size collider1) (.-position collider2) (.-size collider2))
-                [:circle :rectangle] (circle-rectangle-collision? (.-position collider1) (.-size collider1) (.-position collider2) (.-size collider2))
-                [:rectangle :circle] (circle-rectangle-collision? (.-position collider2) (.-size collider2) (.-position collider1) (.-size collider1))
+                [:circle :circle] (circle-circle-collision? pos1 size1 pos2 size2)
+                [:rectangle :rectangle] (rectangle-rectangle-collision? pos1 size1 pos2 size2)
+                [:circle :rectangle] (circle-rectangle-collision? pos1 size1 pos2 size2)
+                [:rectangle :circle] (circle-rectangle-collision? pos2 size2 pos1 size1)
                 false)))
           potential-collisions))
 
