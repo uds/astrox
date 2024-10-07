@@ -1,7 +1,17 @@
 (ns tails.collision.core
+  (:require [clojure.spec.alpha :as s]
   (:require [tails.math.vector2d :as v]
             [astrox.ecs.components :as c]
             [tails.ecs.core :as ecs]))
+
+(s/def ::position ::v/vector2d)
+(s/def ::radius number?)
+(s/def ::size ::v/vector2d)
+(s/def ::entity any?)
+
+(s/fdef circle-circle-collision?
+  :args (s/cat :pos1 ::position :radius1 ::radius :pos2 ::position :radius2 ::radius)
+  :ret boolean?)
 
 (defn circle-circle-collision?
   "Detects collision between two circles.
@@ -10,6 +20,10 @@
   (let [distance (v/distance pos1 pos2)]
     (< distance (+ radius1 radius2))))
 
+(s/fdef rectangle-rectangle-collision?
+  :args (s/cat :pos1 ::position :size1 ::size :pos2 ::position :size2 ::size)
+  :ret boolean?)
+
 (defn rectangle-rectangle-collision?
   "Detects collision between two rectangles.
    Returns a boolean indicating if a collision occurred."
@@ -17,12 +31,20 @@
   (and (< (Math/abs (- x1 x2)) (+ (/ w1 2) (/ w2 2)))
        (< (Math/abs (- y1 y2)) (+ (/ h1 2) (/ h2 2)))))
 
+(s/fdef circle-rectangle-collision?
+  :args (s/cat :circle-pos ::position :circle-radius ::radius :rect-pos ::position :rect-size ::size)
+  :ret boolean?)
+
 (defn circle-rectangle-collision?
   "Detects collision between a circle and a rectangle.
    Returns a boolean indicating if a collision occurred."
   [circle-pos circle-radius rect-pos rect-size]
   ;; Implement logic for circle-rectangle collision detection
   )
+
+(s/fdef broad-phase
+  :args (s/cat :world any?)
+  :ret (s/coll-of (s/tuple ::entity ::entity)))
 
 (defn broad-phase
   "Identifies potential collisions using spatial partitioning.
@@ -34,6 +56,10 @@
           e2 entities
           :when (not= e1 e2)]
       [e1 e2])))
+
+(s/fdef narrow-phase
+  :args (s/cat :world any? :potential-collisions (s/coll-of (s/tuple ::entity ::entity)))
+  :ret (s/coll-of (s/tuple ::entity ::entity)))
 
 (defn narrow-phase
   "Performs detailed collision checks on potential collisions.
@@ -53,6 +79,10 @@
                 [:rectangle :circle] (circle-rectangle-collision? pos2 size2 pos1 size1)
                 false)))
           potential-collisions))
+
+(s/fdef calculate-collision-depth
+  :args (s/cat :collider1 any? :collider2 any?)
+  :ret ::v/vector2d)
 
 (defn calculate-collision-depth
   "Calculates the depth of the collision between two colliders.
@@ -75,6 +105,10 @@
       [:rectangle :circle] ;; Implement logic for rectangle-circle collision depth
       (v/zero)))) ;; Default to zero vector if no collision
 
+(s/fdef calculate-repulsion
+  :args (s/cat :entity1 ::entity :entity2 ::entity :collision-depth ::v/vector2d)
+  :ret nil?)
+
 (defn calculate-repulsion
   "Calculates and applies repulsion forces based on collision depth.
    Returns nil as it performs side effects on the entities."
@@ -82,6 +116,10 @@
   ;; Calculate and apply repulsion forces based on collision depth
   ;; Update the RigidBody components of the entities
   )
+
+(s/fdef resolve-collisions
+  :args (s/cat :world any? :collisions (s/coll-of (s/tuple ::entity ::entity)))
+  :ret nil?)
 
 (defn resolve-collisions
   "Resolves detected collisions by applying repulsion forces.
