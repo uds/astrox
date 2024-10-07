@@ -1,7 +1,8 @@
 (ns tails.collision.core
   (:require [clojure.spec.alpha :as s]
             [tails.math.vector2d :as v]
-            [astrox.ecs.components :as c]
+            ;; FIXME: bad dependency to concrete ECS implementation. define collider component as data structure, similar to rigid-body
+            ;;[astrox.ecs.components :as c]
             [tails.ecs.core :as ecs]))
 
 (s/def ::position ::v/vector2d)

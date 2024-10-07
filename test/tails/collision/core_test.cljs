@@ -1,5 +1,5 @@
 (ns tails.collision.core-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [tails.collision.core :as collision]
             [tails.math.vector2d :as v]))
 
