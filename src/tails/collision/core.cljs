@@ -49,6 +49,22 @@
                 false)))
           potential-collisions))
 
+(defn calculate-collision-depth
+  "Calculates the depth of the collision between two colliders."
+  [collider1 collider2]
+  (let [pos1 (.-position collider1)
+        size1 (.-size collider1)
+        pos2 (.-position collider2)
+        size2 (.-size collider2)]
+    (case [(.-shape collider1) (.-shape collider2)]
+      [:circle :circle] (- (+ (.-radius size1) (.-radius size2)) (v/distance pos1 pos2))
+      [:rectangle :rectangle] (let [dx (- (Math/abs (- (.-x pos1) (.-x pos2))) (+ (/ (.-x size1) 2) (/ (.-x size2) 2)))
+                                      dy (- (Math/abs (- (.-y pos1) (.-y pos2))) (+ (/ (.-y size1) 2) (/ (.-y size2) 2)))]
+                                  (min dx dy))
+      [:circle :rectangle] ;; Implement logic for circle-rectangle collision depth
+      [:rectangle :circle] ;; Implement logic for rectangle-circle collision depth
+      0))) ;; Default to 0 if no collision
+
 (defn calculate-repulsion
   "Calculates and applies repulsion forces based on collision depth."
   [entity1 entity2 collision-depth]
