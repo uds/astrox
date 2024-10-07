@@ -86,7 +86,7 @@
 
 
 (s/fdef calculate-collision-depth
-  :args (s/cat :collider1 any? :collider2 any?)
+  :args (s/cat :collider1 ::c/collider :collider2 ::c/collider)
   :ret ::v/vector2d)
 
 (defn calculate-collision-depth

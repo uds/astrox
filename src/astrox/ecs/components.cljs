@@ -110,7 +110,9 @@
 
 (s/fdef ->Collider :args (s/cat :position ::position :size ::size :shape ::shape) :ret map?)
 
-;; It includes the shape and size of the collider.
+(s/def ::collider (s/with-gen
+                    #(satisfies? Collider %)
+                    #(s/gen #{(->Collider v/zero v/zero :circle)})))
 (defrecord Collider [local-position  ;; local position of the collider, relative to the character's position; 2D vector
                      size            ;; size of the collider; 2D vector
                      shape])         ;; shape of the collider; e.g., :circle, :rectangle
