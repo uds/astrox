@@ -11,9 +11,9 @@
 
 (defn rectangle-rectangle-collision?
   "Detects collision between two rectangles."
-  [pos1 size1 pos2 size2]
-  (and (< (Math/abs (- (v/x pos1) (v/x pos2))) (+ (/ (v/x size1) 2) (/ (v/x size2) 2)))
-       (< (Math/abs (- (v/y pos1) (v/y pos2))) (+ (/ (v/y size1) 2) (/ (v/y size2) 2)))))
+  [{x1 :x y1 :y} {w1 :x h1 :y} {x2 :x y2 :y} {w2 :x h2 :y}]
+  (and (< (Math/abs (- x1 x2)) (+ (/ w1 2) (/ w2 2)))
+       (< (Math/abs (- y1 y2)) (+ (/ h1 2) (/ h2 2)))))
 
 (defn circle-rectangle-collision?
   "Detects collision between a circle and a rectangle."
