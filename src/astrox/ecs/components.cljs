@@ -97,7 +97,8 @@
            :density          0
            :restitution      0
            :linear-damping   0      ;; range [0..1]
-           :angular-damping  0}     ;; range [0..1]
+           :angular-damping  0      ;; range [0..1]
+           :collider         nil}    ;; optional collider information
            
           fields)
    (map->RigidBody)))
