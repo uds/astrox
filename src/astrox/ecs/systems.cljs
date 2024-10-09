@@ -1,5 +1,5 @@
 (ns astrox.ecs.systems
-  "ECS systems"
+  "ECS systems."
   (:require [tails.ecs.core :as ecs]
             [tails.math.physics :as p]
             [tails.pixi.core :as px]
