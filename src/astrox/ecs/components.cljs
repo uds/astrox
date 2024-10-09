@@ -54,16 +54,16 @@
                       orientation               ;; character orientation; scalar in radians, changes counter clock wise relative to y-axis
 
                       ;; velocity
-                      velocity                  ;; character linear velocity; 2D vector
-                      angular-velocity          ;; character angular velocity; scalar in radians 
+                      velocity                  ;; Character linear velocity; 2D vector
+                      angular-velocity          ;; Character angular velocity; scalar in radians 
 
                       ;; force
-                      force                     ;; linear force applied to the character; 2D vector 
-                      torque                    ;; angular force applied to the character; scalar 
+                      force                     ;; Linear force applied to the character; 2D vector 
+                      torque                    ;; Angular force applied to the character; scalar 
 
                       ;; mass
-                      inverse-mass              ;; 1/mass in kg; scalar, default is 1
-                      inverse-inertia           ;; 1/inertia; scalar, default is 1
+                      inverse-mass              ;; 1/mass in kg; Scalar, default is 1
+                      inverse-inertia           ;; 1/inertia; Scalar, default is 1
 
                       ;; material
                       density                   ;; density of the material; mass = density * volume; 
