@@ -18,6 +18,9 @@
 (s/def ::linear-damping ::range01)
 (s/def ::angular-damping ::range01)
 
+(s/def ::collider (s/keys :req-un [::v/vector2d :size :shape]
+                          :opt-un [:aabb-size]))
+
 (s/def ::rigid-body (s/keys :opt-un [::position
                                      ::orientation
                                      ::velocity
@@ -29,7 +32,8 @@
                                      ::density
                                      ::restitution
                                      ::linear-damping
-                                     ::angular-damping]))
+                                     ::angular-damping
+                                     ::collider]))
 
 ;; Min dumping coefficient value
 ;; It is selected as shown in https://github.com/jonpena/Cirobb/blob/06e36c514bcfdceb172557f6e1ab41e91752f479/cirobb/Scene.cpp#L103
