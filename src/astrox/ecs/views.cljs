@@ -1,5 +1,6 @@
 (ns astrox.ecs.views
   "Game object views. A view is a visualization of the ECS entity."
+  ;; View components for rendering.
   (:require [pixi.js :refer (Container)]
             [tails.math.core :as math]
             [tails.pixi.core :as px]))
