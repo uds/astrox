@@ -51,7 +51,7 @@
 ;; - The 0 orientation is when the game object points down (toward the bottom of the screen, along the positive Y axis).
 ;; - Orientation is incremented counter-clockwise; a 90-degree turn points the object to the left.
 (defrecord RigidBody [position                  ;; character position; 2D vector
-                      orientation               ;; character orientation; scalar in radians, changes counter clock wise relative to y-axis
+                      orientation               ;; Character orientation; scalar in radians, changes counter-clockwise relative to y-axis
 
                       ;; velocity
                       velocity                  ;; Character linear velocity; 2D vector
@@ -66,8 +66,8 @@
                       inverse-inertia           ;; 1/inertia; Scalar, default is 1
 
                       ;; material
-                      density                   ;; density of the material; mass = density * volume; 
-                      restitution               ;; "bounciness" of the material
+                      density                   ;; Density of the material; mass = density * volume; 
+                      restitution               ;; "Bounciness" of the material
 
                       ;; damping
                       ;; (see https://github.com/jonpena/Cirobb/blob/06e36c514bcfdceb172557f6e1ab41e91752f479/cirobb/Scene.cpp#L103)  

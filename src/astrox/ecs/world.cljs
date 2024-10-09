@@ -3,6 +3,7 @@
   (:require [tails.pixi.core :as px]
             [astrox.ecs.components :as c]))
 
+;; World management for the ECS framework.
 ;; Holds current state of the ECS world
 (def !ecs-world (atom {}))
 

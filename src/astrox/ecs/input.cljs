@@ -5,6 +5,7 @@
             [astrox.ecs.components :as c]
             [tails.math.vector2d :as v]))
 
+;; Input handling for the game.
 ;; Torque produced by the input
 (def ^:private base-torque 5)
 

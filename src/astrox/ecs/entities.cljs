@@ -7,6 +7,7 @@
 
 
 ;;-- Player's ship --------------------------------------------------------------------------------------------
+;; Entity definitions for the game.
 
 
 (s/fdef create-player-ship :args (s/cat :fields (s/keys :req-un [::c/position ::c/orientation])) :ret ::ecs/ext-entity)
