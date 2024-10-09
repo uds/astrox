@@ -70,7 +70,7 @@
                       ;; damping
                       ;; (see https://github.com/jonpena/Cirobb/blob/06e36c514bcfdceb172557f6e1ab41e91752f479/cirobb/Scene.cpp#L103)  
                       linear-damping            ;; an amount detracted from the velocity on each physics step; range [0..1], default is 0
-                      angular-damping              ;; an amount detracted from the angular velocity on each physics step; range [0..1], default is 0.02
+                      angular-damping           ;; an amount detracted from the angular velocity on each physics step; range [0..1], default is 0
                       ])
 
 
