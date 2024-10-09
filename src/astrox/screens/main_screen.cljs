@@ -1,5 +1,5 @@
 (ns astrox.screens.main-screen
-  "Main screen of the application, a starting point that switches between the game screens."
+  "Main screen of the application; a starting point that switches between the game screens."
   (:require [tails.rinc.rtree :as rt]
             [tails.pixi.core :as px]
             [astrox.screens.widgets :as w]
@@ -9,8 +9,8 @@
 
 
 (defn main-screen
-  "Returns the current game screen layout node. 
-   A 'scene' argument is a PIXI container that is used to render game objects."
+  "Returns the current game screen layout node.
+   The 'scene' argument is a PIXI container used to render game objects."
   [scene]
   (let [root-layout (px/layout {:id     :root-layout
                                 :styles {:width  "100%"

@@ -1,5 +1,5 @@
 (ns astrox.screens.title-screen
-  "Title screen of the game"
+  "Title screen of the game."
   (:require [tails.pixi.core :as px]
             [tails.rinc.rtree :as rt]
             [astrox.screens.core :refer (load-game-screen)]
@@ -77,7 +77,7 @@
 
 
 (defn title-screen
-  "Creates a title screen. Returns a PIXI Layout instance"
+  "Creates a title screen. Returns a PIXI Layout instance."
   []
   (let [screen (px/layout {:id      :title-screen
                            :styles  {:position "center"

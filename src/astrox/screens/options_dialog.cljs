@@ -4,7 +4,7 @@
             [astrox.screens.state :as state]))
 
 (defn options-dialog []
-  (let [body (px/text-layout "Options will be here!" {:fill       0x5D5D5D
+  (let [body (px/text-layout "Options will be here." {:fill       0x5D5D5D
                                                       :dropShadow false
                                                       :position   "center"})
         actions (px/button "Apply" #(state/open-options-dialog false))

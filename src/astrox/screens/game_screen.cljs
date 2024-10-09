@@ -66,8 +66,8 @@
               :styles  (merge {:height 60} styles)}))
 
 (defn game-screen
-  "Creates a game screen. A 'scene' argument is a PIXI container that is used to render game objects.
-   Returns a PIXI Layout instance"
+  "Creates a game screen. The 'scene' argument is a PIXI container used to render game objects.
+   Returns a PIXI Layout instance."
   [scene]
   (let [screen (px/layout {:id      :game-screen
                            :styles  {:position "center"

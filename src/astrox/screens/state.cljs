@@ -25,8 +25,8 @@
   (reset! !pause? pause?))
 
 (defn clear 
-  "Reset screen's global state. 
-   Allows application to reload into the initial state when hot-deploying."
+  "Resets the screen's global state.
+   Allows the application to reload into the initial state when hot-deploying."
   []
   (reset! !current-screen nil)
   (reset! !options-dialog-open? nil)

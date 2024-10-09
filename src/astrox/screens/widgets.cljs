@@ -7,7 +7,7 @@
 
 
 (defn with-hotkeys
-  "Creates a rtree component with lifecycle methods that are used to register and unregister hot key handlers."
+  "Creates an rtree component with lifecycle methods used to register and unregister hotkey handlers."
   [comp hotkey-handlers]
   (let [on-key-pressed (fn [key]
                          (when-let [handler (get hotkey-handlers key)] (handler)))]
@@ -24,7 +24,7 @@
         (if (rt/component? comp) (rt/scene-node comp) comp)))))
 
 (defn background
-  "Returns screen background layout."
+  "Returns the screen background layout."
   [bg]
   (px/layout {:id      (px/new-layout-id :background)
               :styles  {:background bg
@@ -50,7 +50,7 @@
              :marginRight -16}})
 
 (defn dialog-base
-  "Returns layout of the basic dialog."
+  "Returns the layout of the basic dialog."
   [title body actions on-close]
   (let [dialog (px/layout {:id      :dialog-base
                            :content {:title     (px/text-layout title {:marginTop  7
@@ -75,7 +75,7 @@
         (with-hotkeys {kbd/key-code.ESCAPE on-close}))))
 
 (defn banner-panel
-  "Shows a banner panel (e.g. 'loading...' etc.) in a center of the screen."
+  "Shows a banner panel (e.g., 'loading...') in the center of the screen."
   [text]
   (px/layout {:id      (px/new-layout-id :banner)
               :content (px/text-layout text {:fontSize 32
