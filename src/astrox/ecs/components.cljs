@@ -73,7 +73,9 @@
                       ;; (see https://github.com/jonpena/Cirobb/blob/06e36c514bcfdceb172557f6e1ab41e91752f479/cirobb/Scene.cpp#L103)  
                       linear-damping            ;; an amount detracted from the velocity on each physics step; range [0..1], default is 0
                       angular-damping           ;; an amount detracted from the angular velocity on each physics step; range [0..1], default is 0
-                      collider                  ;; optional collider information; map with :local-position, :size, :shape
+
+                      ;; collision
+                      collider                  ;; optional collider information; map with :collider-shape, :size, :size-aabb (recomputed) fields 
                       ])
 
 
@@ -98,7 +100,7 @@
            :restitution      0
            :linear-damping   0      ;; range [0..1]
            :angular-damping  0      ;; range [0..1]
-           :collider         nil}    ;; optional collider information
+           }
            
           fields)
    (map->RigidBody)))

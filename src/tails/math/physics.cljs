@@ -51,13 +51,14 @@
   (js/Math.pow min-dumping n))
 
 
-(defn- recalculate-aabb-size
-  "Recalculates the AABB size of the collider based on the current orientation and size."
-  [{:keys [collider orientation] :as rigid-body}]
-  (if-let [{:keys [size]} collider]
-    (let [cos-orient (Math/abs (Math/cos orientation))
-          sin-orient (Math/abs (Math/sin orientation))
-          [width height] size
+(defn- recalculate-collider-aabb-box
+  "Recalculates the AABB box of the collider based on the current orientation and size."
+  [{:keys [collider orientation] :as rigid-body} new-orientation]
+  ;; recalculate the AABB box only if the orientation has changed
+  (if (and (some? collider) (not (math/approx= orientation new-orientation)))
+    (let [cos-orient (Math/abs (Math/cos new-orientation))
+          sin-orient (Math/abs (Math/sin new-orientation))
+          [width height] (:size collider)
           aabb-width (+ (* width cos-orient) (* height sin-orient))
           aabb-height (+ (* height cos-orient) (* width sin-orient))]
       (assoc-in rigid-body [:collider :size-aabb] [aabb-width aabb-height]))
@@ -97,7 +98,7 @@
 ;; TODO: the collision detection works only for axis-aligned AABB rectangles. 
 ;; The AABB rectangle should be re-computed from the position and size of the collider on each orientation change.
 ;; see: https://stackoverflow.com/questions/6657479/aabb-of-rotated-sprite
-    
+
 
     (-> rigid-body
         (assoc :position         position
@@ -109,13 +110,4 @@
                ;; this is an impulse based integration, need to reset forces after the computation step
                :force            v/zero
                :torque           0)
-        (recalculate-aabb-size))
-           :position         position
-           :orientation      orientation
-           ;; using "round-to-0" when storing the new velocity values to stop recalculations of the bodies that are changing 
-           ;; ever so slightly on each step
-           :velocity         (v/zero-if-near velocity 1)
-           :angular-velocity (math/zero-if-near ang-velocity 0.01)
-           ;; this is an impulse based integration, need to reset forces after the computation step
-           :force            v/zero
-           :torque           0)))
+        (recalculate-collider-aabb-box orientation))))
