@@ -73,6 +73,7 @@
                       ;; (see https://github.com/jonpena/Cirobb/blob/06e36c514bcfdceb172557f6e1ab41e91752f479/cirobb/Scene.cpp#L103)  
                       linear-damping            ;; an amount detracted from the velocity on each physics step; range [0..1], default is 0
                       angular-damping           ;; an amount detracted from the angular velocity on each physics step; range [0..1], default is 0
+                      collider                  ;; optional collider information; map with :local-position, :size, :shape
                       ])
 
 
@@ -102,18 +103,3 @@
    (map->RigidBody)))
 
 
-;; -------------------------------------------------------------------------------------------------------
-;; Collider
-
-
-(s/def ::position ::v/vector2d)
-(s/def ::size ::v/vector2d)
-(s/def ::shape #{:circle :rectangle})
-
-(s/fdef ->Collider :args (s/cat :position ::position :size ::size :shape ::shape) :ret map?)
-
-(defrecord Collider [local-position  ;; local position of the collider, relative to the character's position; 2D vector
-                     size            ;; size of the collider; 2D vector
-                     shape])         ;; shape of the collider; e.g., :circle, :rectangle
-
-(s/def ::collider #(satisfies? Collider %)) ;; Ensures the object satisfies the Collider protocol
