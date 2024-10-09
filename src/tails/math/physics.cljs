@@ -7,6 +7,7 @@
 (s/def ::range01 (fn [n] (and (number? n) (<= 0 n) (<= n 1))))
 
 (s/def ::position ::v/vector2d)
+(s/def ::size ::v/vector2d)
 (s/def ::orientation number?)
 (s/def ::velocity ::v/vector2d)
 (s/def ::angular-velocity number?)
@@ -18,8 +19,12 @@
 (s/def ::linear-damping ::range01)
 (s/def ::angular-damping ::range01)
 
-(s/def ::collider (s/keys :req-un [::v/vector2d :size :shape]
-                          :opt-un [:aabb-size]))
+
+(s/def ::size-aabb ::v/vector2d)
+(s/def ::collider-shape #{:circle :rectangle})
+
+(s/def ::collider (s/keys :req-un [::collider-shape ::size]
+                          :opt-un [::size-aabb]))
 
 (s/def ::rigid-body (s/keys :opt-un [::position
                                      ::orientation
