@@ -51,7 +51,17 @@
   (js/Math.pow min-dumping n))
 
 
-(s/fdef integration-step :args (s/cat :rigid-body ::rigid-body, :delta-time number?) :ret ::rigid-body)
+(defn- recalculate-aabb-size
+  "Recalculates the AABB size of the collider based on the current orientation and size."
+  [{:keys [collider orientation] :as rigid-body}]
+  (if-let [{:keys [size]} collider]
+    (let [cos-orient (Math/abs (Math/cos orientation))
+          sin-orient (Math/abs (Math/sin orientation))
+          [width height] size
+          aabb-width (+ (* width cos-orient) (* height sin-orient))
+          aabb-height (+ (* height cos-orient) (* width sin-orient))]
+      (assoc-in rigid-body [:collider :size-aabb] [aabb-width aabb-height]))
+    rigid-body))
 
 (defn integration-step
   "Updates position and orientation of the rigid body based on current force and torque impulses.
@@ -89,7 +99,17 @@
 ;; see: https://stackoverflow.com/questions/6657479/aabb-of-rotated-sprite
     
 
-    (assoc rigid-body
+    (-> rigid-body
+        (assoc :position         position
+               :orientation      orientation
+               ;; using "round-to-0" when storing the new velocity values to stop recalculations of the bodies that are changing 
+               ;; ever so slightly on each step
+               :velocity         (v/zero-if-near velocity 1)
+               :angular-velocity (math/zero-if-near ang-velocity 0.01)
+               ;; this is an impulse based integration, need to reset forces after the computation step
+               :force            v/zero
+               :torque           0)
+        (recalculate-aabb-size))
            :position         position
            :orientation      orientation
            ;; using "round-to-0" when storing the new velocity values to stop recalculations of the bodies that are changing 
