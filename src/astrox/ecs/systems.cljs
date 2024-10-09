@@ -3,7 +3,8 @@
   (:require [tails.ecs.core :as ecs]
             [tails.math.physics :as p]
             [tails.pixi.core :as px]
-            [astrox.ecs.components :as c]))
+            [astrox.ecs.components :as c]
+            [tails.collision.core :as collision]))
 
 (defn- render-new-entity-system
   "Renders entity's view once an entity with the View component is created."
@@ -33,4 +34,13 @@
    Each 'system' function handles a specific component of the entity and is defined as (fn [component eid world delta-time delta-frame])."
   [scene]
   {c/View      [(partial render-new-entity-system scene)]
-   c/RigidBody [physics-system]})
+   c/RigidBody [physics-system]
+   ;; Collision detection should happen after all movements were computed and updated
+   :collision [collision-detection-system]})
+
+(defn- collision-detection-system
+  "Detects and resolves collisions between entities."
+  [world]
+  (let [potential-collisions (collision/broad-phase world)
+        actual-collisions (collision/narrow-phase world potential-collisions)]
+    (collision/resolve-collisions world actual-collisions)))
