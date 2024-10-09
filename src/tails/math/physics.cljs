@@ -60,7 +60,7 @@
     :as   rigid-body} delta-time]
   (let [linear-damping-k (dumping-k linear-damping)
         ang-damping-k    (dumping-k angular-damping)
-        
+
         ;; using Semi-implicit Euler integration method, as described here: https://gafferongames.com/post/integration_basics/
 
         ;; linear velocity
@@ -74,7 +74,12 @@
         ;; position & orientation
         position         (v/add position (v/mul velocity delta-time))
         orientation      (+ orientation (* ang-velocity delta-time))]
+
+;; TODO: the collision detection works only for axis-aligned AABB rectangles. 
+;; The AABB rectangle should be re-computed from the position and size of the collider on each orientation change.
+;; see: https://stackoverflow.com/questions/6657479/aabb-of-rotated-sprite
     
+
     (assoc rigid-body
            :position         position
            :orientation      orientation

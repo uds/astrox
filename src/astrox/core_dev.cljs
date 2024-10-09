@@ -6,8 +6,10 @@
 ;; application start entry point 
 (defn ^:dev/after-load start []
   (core/start)
-  ;; NOTE that full SPECS instrumentation will dramatically slow down game loop
-  (js/console.log "SPECS instrumented: " (st/instrument)))
+  ;; NOTE that full SPECS instrumentation will dramatically slow down the game loop
+  (if true 
+    (js/console.log "SPECS instrumented: " (st/instrument))
+    (js/console.warn "WARNING: SPECS are NOT instrumented!")))
 
 ;; called by the shadow-cljs hot-loader every time when application about to be reloaded
 (defn ^:dev/before-load-async stop [done]

@@ -16,7 +16,7 @@
    Returns entity data as a vector: [EntityID, {ComponentType -> ComponentInstance}]."
   [fields]
   (let [max-health 100
-        phys-props {:linear-damping  0.5
+        phys-props {:linear-damping  0.3
                     :angular-damping 0.5}
         eid        (ecs/create-entity)]
     [eid [(c/->Player)
