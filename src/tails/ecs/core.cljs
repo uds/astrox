@@ -46,10 +46,10 @@
 
 (s/fdef create-entity :ret uuid?)
 
-(defn create-entity 
- "Returns new entity ID. Entity in ECS is represented by its unique ID."
- []
- (random-uuid))
+(defn create-entity
+  "Returns new entity ID. Entity in ECS is represented by its unique ID."
+  []
+  (random-uuid))
 
 
 (defn component-type
@@ -93,7 +93,7 @@
     world))
 
 
-(defn- assoc-removed-component 
+(defn- assoc-removed-component
   "Update :removed-components entry with about to be removed component"
   [world entity-id component-type]
   (if-let [component (get-in world [:components component-type entity-id])]
@@ -218,22 +218,24 @@
 
 
 (defn- update-component-only
-  "Applies each update-fn from the input sequence to the component and returns updated component."
-  [component update-fn-seq & args]
-  (reduce (fn [comp update-fn]
-            (apply update-fn comp args))
-          component update-fn-seq))
+  "Applies each 'tick' system-fn from the input sequence to the component and returns updated component.
+   Returns updated component."
+  [component system-fn-seq & args]
+  (reduce (fn [comp system-fn]
+            (apply system-fn comp args))
+          component system-fn-seq))
 
 (defn- update-components-only
-  "Update components by calling update-fn-seq on all components of the input map { EntityId -> ComponentInstance }.
-   The update-fn is a function with [component eid & args] arguments.
+  "Update components by calling system-fn-seq on all components of the input map { EntityId -> ComponentInstance }.
+   The system-fn is a function with [component eid & args] arguments.
    Returns only changed components as a map { EntityId -> ComponentInstance }."
-  [components update-fn-seq & args]
+  [components system-fn-seq & args]
   (reduce-kv (fn [result eid component]
-               (let [upd-component (apply update-component-only component update-fn-seq eid args)]
+               (let [upd-component (apply update-component-only component system-fn-seq eid args)]
                  ;; adds only changed components to the result list
                  (if (= component upd-component)
-                   result (assoc result eid upd-component))))
+                   result
+                   (assoc result eid upd-component))))
              {} components))
 
 (defn- merge-updated-components
@@ -247,11 +249,11 @@
     world))
 
 (defn- update-components
-  "Update components by calling update-fn-seq on all components of the input map { EntityId -> ComponentInstance }.
-   The update-fn is a function with [component eid & args] arguments.
+  "Update components by calling system-fn-seq on all components of the input map { EntityId -> ComponentInstance }.
+   The system-fn is a function with [component eid & args] arguments.
    Returns updated version of the world."
-  [world component-type components update-fn-seq & args]
-  (->> (apply update-components-only components update-fn-seq args)
+  [world component-type components system-fn-seq & args]
+  (->> (apply update-components-only components system-fn-seq args)
        (merge-updated-components world component-type)))
 
 
@@ -261,8 +263,9 @@
   "Executes given systems for updated components and returns an updated world.
    The 'systems' argument is a map of a system tick functions keyed by the component type:
    { ComponentType -> [ (fn [component eid world delta] ...) ] }
-   Whenever a component of the given type has changed since last frame, the corresponding tick functions
-   are called. The tick function returns an updated component instance."
+   Whenever a component of the given type has changed since the last frame, associated with that component system tick functions
+   are called. The system tick function returns an updated component instance.
+   Returns updated version of the world."
   [world systems delta-time delta-frame]
   (if-let [upd-components (not-empty (:updated-components world))]
     ;; clear a list of all updated and removed components

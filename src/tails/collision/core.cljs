@@ -26,6 +26,9 @@
   :args (s/cat :pos1 ::position :size1 ::size :pos2 ::position :size2 ::size)
   :ret boolean?)
 
+;; FIXME: this detection works only for axis-aligned AABB rectangles. 
+;; The AABB rectangle should be re-computed from the position and size of the collider on each orientation change.
+;; see: https://stackoverflow.com/questions/6657479/aabb-of-rotated-sprite
 (defn rectangle-rectangle-collision?
   "Detects collision between two rectangles.
    Returns a boolean indicating if a collision occurred."
@@ -55,6 +58,8 @@
    Returns a sequence of entity pairs that may collide."
   [world]
   (let [entities (ecs/entities-with-component world c/Collider)]
+    ;; FIXME: the nested loop should not collect all objects but only these that are coming after already seen in outer loop.
+    ;; e.g. oture loop: for(i = 0; ...), inner loop: for(j = i+1, ...) 
     ;; Simple broad phase using pairwise comparison
     (for [e1 entities
           e2 entities
