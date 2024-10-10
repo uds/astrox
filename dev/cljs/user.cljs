@@ -1,36 +1,35 @@
 (ns cljs.user
-  (:require [tails.rinc.core :as ri]
-            [tails.rinc.reaction :as rn]
-            [tails.ecs.core :as ecs]))
+  (:require [tails.rinc.reaction :as rn]
+            [tails.ecs.core :as ecs]
+            [astrox.ecs.world :as w]))
 
 
 ;; -- RX ----------------------------------------------------------------
 
 
-(defn db [] @ri/!app-db)
-
-(defn rx-deps* []
+(defn rx-deps* [!ratom]
   (println "strict digraph rx_deps {")
   (rn/walk-deps
    (fn [p r]
      (when p
        (println (pr-str (str (.-id p))) "->" (pr-str (str (.-id r)))))
      (.-id r))
-   nil ri/!app-db)
+   nil !ratom)
   (print "}"))
 
 (defn rx-deps
   "Print reactive dependencies as DOT graph. 
    Uses https://dreampuf.github.io/GraphvizOnline to render the result."
-  []
+  [!ratom]
   (js/encodeURI
-   (str "https://dreampuf.github.io/GraphvizOnline/#" (with-out-str (rx-deps*)))))
+   (str "https://dreampuf.github.io/GraphvizOnline/#" (with-out-str (rx-deps* !ratom)))))
 
 
 ;; -- ECS ----------------------------------------------------------------
 
 
-(defn world [] (:world (db)))
+(defn world [] 
+  w/!ecs-world)
 
 (defn entities* []
   (-> (world) :component-types keys))
