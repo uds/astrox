@@ -218,6 +218,28 @@
 
 
 ;;----------------------------------------------------------------
+;; Graphics elements
+
+(defn draw-frame
+  "Draws a rectangular frame"
+  [^js x y width height color]
+  (let [graphics (pixijs/Graphics.)]
+    (doto graphics
+      (. lineStyle 1, color)
+      (.drawRect x y width height))
+    graphics))
+
+(defn draw-hollow-circle
+  "Draws a hollow circle"
+  [^js x y radius color]
+  (let [graphics (pixijs/Graphics.)]
+    (doto graphics
+      (. lineStyle 1, color)
+      (.drawCircle x y radius))
+    graphics))
+
+
+;;----------------------------------------------------------------
 ;; Effects
 
 
@@ -264,7 +286,8 @@
                      :baseTexture false}))
 
 (defn sprite
-  "Creates sprite from the asset."
+  "Creates sprite from the asset.
+   The asset can be either a name (e.g. image name) or a keyword."
   [asset]
   (->> (if (keyword? asset) (name asset) asset)
        (.from Sprite)))

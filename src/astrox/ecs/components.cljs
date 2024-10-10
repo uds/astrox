@@ -101,7 +101,6 @@
            :linear-damping   0      ;; range [0..1]
            :angular-damping  0      ;; range [0..1]
            }
-           
           fields)
    (map->RigidBody)))
 
