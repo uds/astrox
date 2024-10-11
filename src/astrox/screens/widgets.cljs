@@ -29,7 +29,7 @@
   (px/layout {:id      (px/new-layout-id :background)
               :styles  {:background bg
                         :position   "center"
-                        :maxWidth   "100%"
+                        :minWidth   "100%"
                         :minHeight  "100%"}}))
 
 (defn icon-with-shadow [asset]

@@ -1,4 +1,4 @@
-# Preparations
+# Project Setup
 
 ## How to setup tools 
 1. Install Calva (VS Code extension)
@@ -56,18 +56,18 @@ Only makes sense to do if reactions are not always disposed by the framework, e.
 
 # Issues
 
-1. The @pixi/tilemap@3.2.1 package has outdated peer references to the older @pixi/core package:  
-   _Install package manually with `npm i pixi-viewport@4.34.4 --legacy-peer-deps` command before starting ClojureScript jack-in or build._
-
-2. The SPECS instrumentation will not always pick new specs definition on hot-reload.  
+1. The SPECS instrumentation will not always pick new specs definition on hot-reload.  
    _Save core_dev.cljs file in order to refresh SPECS instrumentation_
 
 # TODO
 
+-  getting following WARNING from PIXI on hot reload:
+"createTexture.js:10 [Assets] A BaseTexture managed by Assets was destroyed instead of unloaded! Use Assets.unload() instead of destroying the BaseTexture."
+
 - scene in game_screen.cljs has to be reset when exiting game_screen and and then starting game again.
   Currently it's crashing.
 
-- resizing game on Level1 will "jump" object below the screen lower bound
+- resizing game window (making smaller horizontally) on the Level1 will "jump" game objects to bottom of the screen or event below the screen lower bound
 
 + make dedicated game stage container:
 - make it and all children non-interactive -> (set! (.-interactiveChildren xxx) false)

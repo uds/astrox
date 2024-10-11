@@ -55,8 +55,7 @@
               :content {:score (text (str "Score: " score) {:position "leftTop"})
                         :lives {:content (map #(life-icon %) (range lives))
                                 :styles  {:position "leftBottom"
-                                          :width "100%"}}
-                        }
+                                          :width "100%"}}}
               :styles  (merge {:height 60} styles)}))
 
 (defn- high-score [score styles]
