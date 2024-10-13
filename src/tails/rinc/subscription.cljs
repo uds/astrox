@@ -1,6 +1,7 @@
 (ns tails.rinc.subscription
   "A simple signal graph subscription model inspired by re-frame and ratom."
-  (:require [tails.rinc.reaction :as r]))
+  (:require [tails.rinc.reaction :as r]
+            [clojure.spec.alpha :as s]))
 
 
 ;; The subscription registry and cache are global atoms, providing a single source of truth for all subscriptions.
@@ -9,6 +10,17 @@
 (def ^:private !sub-registry (atom {}))
 (def ^:private !sub-cache (atom {}))
 
+
+(s/def ::query-id any?)
+(s/def ::query vector?)
+
+(s/fdef subscribe*
+  :args (s/cat :query ::query)
+  :ret any?)
+
+(s/fdef subscribe
+  :args (s/cat :query ::query)
+  :ret any?)
 
 (defn clear-subscription-cache
   "Clears the subscription cache, disposing of every subscription reaction in the cache."
