@@ -7,14 +7,14 @@
             [tails.pixi.core :as px]))
 
 
-
 ;; -------------------------------------------------------------------------------------------------------
 ;; Player
 
 
-;; Marks an entity to be controlled by the player.
-;; Typically, there is only one player entity in the game.
-(defrecord Player [])
+(defrecord
+ ^{:doc "Marks an entity to be controlled by the player.
+         Typically, there is only one player entity in the game."}
+ Player [])
 
 
 ;; -------------------------------------------------------------------------------------------------------
@@ -24,9 +24,10 @@
 (s/fdef ->View :args (s/cat :view ::view) :ret map?)
 (s/def ::view ::px/object)
 
-;; Represents the visual aspect of a character.
-;; The "view" field is a PIXI display object.
-(defrecord View [view])
+(defrecord
+ ^{:doc "Represents the visual aspect of a character.
+         The 'view' field is a PIXI display object."}
+ View [view])
 
 
 ;; -------------------------------------------------------------------------------------------------------
@@ -43,44 +44,42 @@
 ;; Rigid body
 
 
-;; Component for characters controlled by physics.
-;; Reference: https://gamedevelopment.tutsplus.com/series/how-to-create-a-custom-physics-engine--gamedev-12715
-;;
-;; - Position and velocity are 2D vectors (x, y).
-;; - Orientation and angular velocity are scalar numbers.
-;; - The 0 orientation is when the game object points down (toward the bottom of the screen, along the positive Y axis).
-;; - Orientation is incremented counter-clockwise; a 90-degree turn points the object to the left.
-(defrecord RigidBody [position                  ;; character position; 2D vector
-                      orientation               ;; Character orientation; scalar in radians, changes counter-clockwise relative to y-axis
+(defrecord
+ ^{:doc "Represents a rigid body of a character in the game world.
+         The rigid body is controlled by physics and has properties like position, velocity, force, etc.
+         Reference: https://gamedevelopment.tutsplus.com/series/how-to-create-a-custom-physics-engine--gamedev-12715"}
+ RigidBody [position                  ;; Character position; 2D vector
+            orientation               ;; Character orientation; scalar in radians
+                                      ;; - changes counter-clockwise relative to y-axis, e.g. a 90-degree turn points the object to the left
+                                      ;; - the 0 orientation is when the game object points down (toward the bottom of the screen, along the positive Y axis).
 
-                      ;; velocity
-                      velocity                  ;; Character linear velocity; 2D vector
-                      angular-velocity          ;; Character angular velocity; scalar in radians 
+            ;; velocity
+            velocity                  ;; Character linear velocity; 2D vector
+            angular-velocity          ;; Character angular velocity; scalar in radians 
 
-                      ;; force
-                      force                     ;; Linear force applied to the character; 2D vector 
-                      torque                    ;; Angular force applied to the character; scalar 
+            ;; force
+            force                     ;; Linear force applied to the character; 2D vector 
+            torque                    ;; Angular force applied to the character; scalar 
 
-                      ;; mass
-                      inverse-mass              ;; 1/mass in kg; Scalar, default is 1
-                      inverse-inertia           ;; 1/inertia; Scalar, default is 1
+            ;; mass
+            inverse-mass              ;; 1/mass in kg; Scalar, default is 1
+            inverse-inertia           ;; 1/inertia; Scalar, default is 1
 
-                      ;; material
-                      density                   ;; Density of the material; mass = density * volume; 
-                      restitution               ;; "Bounciness" of the material
+            ;; material
+            density                   ;; Density of the material; mass = density * volume; 
+            restitution               ;; "Bounciness" of the material
 
-                      ;; damping
-                      ;; (see https://github.com/jonpena/Cirobb/blob/06e36c514bcfdceb172557f6e1ab41e91752f479/cirobb/Scene.cpp#L103)  
-                      linear-damping            ;; an amount detracted from the velocity on each physics step; range [0..1], default is 0
-                      angular-damping           ;; an amount detracted from the angular velocity on each physics step; range [0..1], default is 0
+            ;; damping
+            ;; (see https://github.com/jonpena/Cirobb/blob/06e36c514bcfdceb172557f6e1ab41e91752f479/cirobb/Scene.cpp#L103)  
+            linear-damping            ;; an amount detracted from the velocity on each physics step; range [0..1], default is 0
+            angular-damping           ;; an amount detracted from the angular velocity on each physics step; range [0..1], default is 0
 
-                      ;; collision
-                      collider                  ;; optional collider information; map with :collider-shape, :size, :size-aabb (recomputed) fields 
-                      ])
+            ;; collision
+            collider                  ;; optional collider information; map with :collider-shape, :size, :size-aabb (recomputed) fields 
+            ])
 
 
 (s/fdef new-rigid-body :args (s/cat :fields ::p/rigid-body) :ret ::p/rigid-body)
-
 
 (defn new-rigid-body
   "Creates a new instance of the RigidBody record. 

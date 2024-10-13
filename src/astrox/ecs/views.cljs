@@ -4,6 +4,28 @@
             [tails.math.core :as math]
             [tails.pixi.core :as px]))
 
+(defprotocol View
+  "A view is a container that holds multiple sprites representing different aspects of the game object.
+   It is mutable to allow for changing the sprites during the game object's life cycle.
+   It exposes methods to manipulate the view's state."
+  (set-pos [this pos] "Sets the view's position."))
+
+(defprotocol ShipView
+  (set-health [this health] "Sets the view's health level as a value in [0..1] range.")
+  (set-shield [this shield] "Sets the view's shield level as a value in [0..1] range.")
+  (set-thrust [this thrust] "Sets the view's thrust level as a value in [0..1] range."))
+
+(deftype PlayerShip [sprite health shield thrust]
+  View
+  (set-pos [_this pos] (px/set-pos sprite pos))
+  
+  ShipView
+  (set-health [_this health] )
+  (set-shield [_this shield] )
+  (set-thrust [_this thrust] ))
+
+
+
 (defn- mul-aspect
   "Computes aspect by dividing the object's width by it's height and multiplies resulting aspect by value 'k'."
   [obj k]
@@ -15,8 +37,8 @@
   (let [width (.-width sprite)
         height (.-height sprite)]
     (->> ;;(px/draw-frame (/ width -2) (/ height -2) width height 0x00FF00)
-         (px/draw-hollow-circle 0 0 (/ (+ width height) 4) 0x00FF00)
-         (.addChild sprite))))
+     (px/draw-hollow-circle 0 0 (/ (+ width height) 4) 0x00FF00)
+     (.addChild sprite))))
 
 (defn create-player-ship
   "Creates a ship view"
