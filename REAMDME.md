@@ -80,6 +80,3 @@ Only makes sense to do if reactions are not always disposed by the framework, e.
 - Touch is not working for buttons?
 
 - Fix Pixi error in sprite tweening on hot reload -> still after recent "fix" with re-creation of shared ticker
-
-- Pixi UI bug: [v.0.9.1] FancyButton: tweedle.js reports a WARNING on each playAnimations if both "animations" and any of "defaultView", "hoverView", "pressedView" or "icon" properties are set in constructor.
-  see https://github.com/pixijs/ui/issues/115

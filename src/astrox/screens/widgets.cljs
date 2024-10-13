@@ -57,18 +57,19 @@
                                                                        :marginLeft 20})
                                      :close-btn (close-dialog-button on-close)
                                      :body      body
-                                     :actions   (when actions
+                                     :actions   (if actions
                                                   {:content actions
                                                    :styles  {:position     "centerBottom"
-                                                             :marginBottom 30}})}
+                                                             :marginBottom 30}}
+                                                  {})}
                            :styles  {:background (px/sprite "dialog_panel.png")
                                      :position   "center"
                                      :maxWidth   "90%"
                                      :maxHeight  "90%"}})]
-    
+
     ;; any other mode will make the dialog "transparent" for clicks, allowing to click on underlying parent's buttons.
     (set! (.-eventMode dialog) "static")
-    
+
     ;; wraps dialog into the screen overlay that will dim and lock access to the underlying screen
     (-> dialog
         (px/as-modal)
