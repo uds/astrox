@@ -67,10 +67,11 @@
 (defn subscribe
   "Subscribes to a specified event.
    Returns a 'reaction' (e.g., a reactive atom with a function computing its state) that observes a part of 
-   the app-db described by the registered subscription under query-id.
+   the root ratom described by the registered subscription under query-id.
    'query' is a vector where the first item is the ID of a registered query and the rest are event arguments.
    The subscription's 'reaction' is cached by the 'query-id' key and will be reused if subscribed again.
-   Note that the 'reaction' is not automatically destroyed and remains active until the application stops."
+   Note that the subscription's 'reaction' is not automatically destroyed and remains active until the application stops 
+   or subscription cache is not cleared."
   [query]
   (if-let [sub (get-cached-sub query)]
     sub
