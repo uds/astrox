@@ -1,7 +1,12 @@
 (ns tails.rinc.subscription
-  "A simple signal graph subscription model inspired by re-frame and ratom."
+  "A simple signal graph subscription inspired by re-frame and ratom."
   (:require [tails.rinc.reaction :as r]
             [clojure.spec.alpha :as s]))
+
+
+(s/def ::query-id keyword?)
+(s/def ::query (s/spec (s/cat :query-id ::query-id, :args (s/* any?))))
+(s/def ::reaction r/reaction?)
 
 
 ;; The subscription registry and cache are global atoms, providing a single source of truth for all subscriptions.
@@ -11,17 +16,6 @@
 (def ^:private !sub-cache (atom {}))
 
 
-(s/def ::query-id any?)
-(s/def ::query vector?)
-
-(s/fdef subscribe*
-  :args (s/cat :query ::query)
-  :ret any?)
-
-(s/fdef subscribe
-  :args (s/cat :query ::query)
-  :ret any?)
-
 (defn clear-subscription-cache
   "Clears the subscription cache, disposing of every subscription reaction in the cache."
   []
@@ -30,7 +24,7 @@
     (r/dispose! sub))
   (reset! !sub-cache {}))
 
-(defn clear-all
+(defn clear
   "Clears all internal states, including the subscription cache and registry."
   []
   (clear-subscription-cache)
@@ -56,11 +50,13 @@
       (r/dispose! sub))))
 
 
+(s/fdef reg-sub :args (s/cat :query-id ::query-id, :signal-fn fn?, :query-fn fn?) :ret any?)
+
 (defn reg-sub
   "Registers a subscription function under the given key.
    'signal-fn' is a function '(query-v) -> signal(s)' that produces 'input-signals' when subscribed.
    'query-fn' is a function '(input-signals query-v) -> reaction', where 'input-signals' is a list of signals 
-   (reactive atoms, reactions) produced by 'signal-fn', and 'query-v' is the subscription query vector.
+   (e.g. list of reactive atoms or reactions) produced by 'signal-fn', and 'query-v' is the subscription query vector.
    'query-fn' should return a subscription reactive atom."
   ([query-id signal-fn query-fn]
    (when (get @!sub-registry query-id)
@@ -76,11 +72,14 @@
                     (query-fn signals query)))
       (throw (js/Error. (str "Unregistered subscription query: " query-id))))))
 
+
+(s/fdef subscribe :args (s/cat :query ::query) :ret ::reaction)
+
 (defn subscribe
   "Subscribes to a specified event.
    Returns a 'reaction' (e.g., a reactive atom with a function computing its state) that observes a part of 
-   the root ratom described by the registered subscription under query-id.
-   'query' is a vector where the first item is the ID of a registered query and the rest are event arguments.
+   the map stored in the ratom, described by the registered subscription under query-id.
+   'query' is a vector where the first item is the ID of a registered query (query-id) and the rest are event arguments.
    The subscription's 'reaction' is cached by the 'query-id' key and will be reused if subscribed again.
    Note that the subscription's 'reaction' is not automatically destroyed and remains active until the application stops 
    or subscription cache is not cleared."
@@ -90,4 +89,3 @@
     (let [sub (subscribe* query)]
       (cache-sub query sub)
       sub)))
-
