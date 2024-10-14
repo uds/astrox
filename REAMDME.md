@@ -67,7 +67,7 @@ Only makes sense to do if reactions are not always disposed by the framework, e.
 - scene in game_screen.cljs has to be reset when exiting game_screen and and then starting game again.
   Currently it's crashing.
 
-- resizing game window (making smaller horizontally) on the Level1 will "jump" game objects to bottom of the screen or event below the screen lower bound
+- resizing game window (making smaller horizontally) on the Level1 will "jump" game objects to bottom of the screen or even below the screen lower bound
 
 + make dedicated game stage container:
 - make it and all children non-interactive -> (set! (.-interactiveChildren xxx) false)

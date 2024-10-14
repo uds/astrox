@@ -35,9 +35,10 @@
 (s/def ::rectangle-collider (s/keys :req-un [:rectangle/shape ::size]
                                     :opt-un [::size-aabb]))
 
-(s/def ::collider (s/or :circle ::circle-collider, :rectangle ::rectangle-collider))
+(s/def ::collider (s/nilable (s/or :circle ::circle-collider, :rectangle ::rectangle-collider)))
 
-(s/def ::rigid-body (s/keys :opt-un [::position
+(s/def ::rigid-body (s/keys :opt-un [
+                                     ::position
                                      ::orientation
                                      ::velocity
                                      ::angular-velocity

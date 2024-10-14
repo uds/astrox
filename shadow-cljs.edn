@@ -16,8 +16,7 @@
                                                        :preloads [cljs.user]}}}}
 
                 :test   {:target   :browser-test
-                         :test-dir "target/test"
-                         :dev-http {8283 {:root "target/test"}}}}
+                         :test-dir "target/test"}}
 
  :dev-http     {8282 {:roots ["resources/public", "target/app"]}
                 8283 {:root "target/test"}}}
