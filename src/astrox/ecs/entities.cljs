@@ -14,11 +14,12 @@
 
 (defn create-player-ship
   "Creates a player ship entity.
-   Returns entity data as a vector: [EntityID, {ComponentType -> ComponentInstance}]."
+   Returns entity data as a vector: [EntityID, [ComponentInstance]]."
   [fields]
   (let [max-health 100
         phys-props {:linear-damping  0.3
-                    :angular-damping 0.5}
+                    :angular-damping 0.5
+                    :collider        {:shape :circle, :radius 100}}
         eid        (ecs/create-entity)]
     [eid [(c/->Player)
           (c/->View (views/create-player-ship))
@@ -33,7 +34,7 @@
 
 (defn create-meteor
   "Creates a meteor entity with given props.
-   Returns entity data as a vector: [EntityID, {ComponentType -> ComponentInstance}]."
+   Returns entity data as a vector: [EntityID, [[ComponentInstance]]."
   [fields]
   (let [max-health 20
         eid        (ecs/create-entity)]

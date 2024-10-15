@@ -3,8 +3,7 @@
    Each component is represented as a record that defines a specific trait of an ECS entity."
   (:require [clojure.spec.alpha :as s]
             [tails.math.vector2d :as v]
-            [tails.math.physics :as p]
-            [tails.pixi.core :as px]))
+            [tails.math.physics :as p]))
 
 
 ;; -------------------------------------------------------------------------------------------------------
@@ -20,13 +19,11 @@
 ;; -------------------------------------------------------------------------------------------------------
 ;; View
 
-
-(s/fdef ->View :args (s/cat :view ::view) :ret map?)
-(s/def ::view ::px/object)
+(s/fdef ->View :args (s/cat :view any?) :ret map?)
 
 (defrecord
  ^{:doc "Represents the visual aspect of a character.
-         The 'view' field is a PIXI display object."}
+         The 'view' field is a view object managing one or more PIXI display objects."}
  View [view])
 
 

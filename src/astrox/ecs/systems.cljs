@@ -2,8 +2,8 @@
   "ECS systems."
   (:require [tails.ecs.core :as ecs]
             [tails.math.physics :as p]
-            [tails.pixi.core :as px]
-            [astrox.ecs.components :as c]))
+            [astrox.ecs.components :as c]
+            [astrox.ecs.views :as v]))
 
 (defn- render-new-entity-system
   "Renders entity's view once an entity with the View component is created. 
@@ -12,10 +12,11 @@
   (let [rigid-body (ecs/component world eid c/RigidBody)
         {position    :position
          orientation :orientation} rigid-body
-        view-obj  (.-view view)]
-    (.addChild scene view-obj)
-    (px/set-pos view-obj position)
-    (set! (.-rotation view-obj) orientation)
+        view-obj  (:view view)]
+    (.addChild scene (v/root-sprite view-obj))
+    (v/set-position view-obj position)
+    (v/set-orientation view-obj orientation)
+    (v/show-collider view-obj (:collider rigid-body))     ;; FIXME: why sometimes it's not possible to use .-collider here? also for GameObject protocol?
     view))
 
 
@@ -25,8 +26,8 @@
   [rigid-body eid world delta-time]
   (let [rigid-body (p/integration-step rigid-body delta-time)
         view       (-> (ecs/component world eid c/View) .-view)]
-    (px/set-pos view (.-position rigid-body))
-    (set! (.-rotation view) (.-orientation rigid-body))
+    (v/set-position view (.-position rigid-body))
+    (v/set-orientation view (.-orientation rigid-body))
     rigid-body))
 
 
