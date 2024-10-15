@@ -11,5 +11,5 @@
   "Destroys all active entity views and resets the ECS world."
   []
   (doseq [view (vals (get-in @!ecs-world [:components c/View]))]
-    (v/destroy (.-view view)))
+    (v/destroy (:view view)))
   (reset! !ecs-world {}))

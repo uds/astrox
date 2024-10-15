@@ -32,8 +32,7 @@
 ;; Rectangle collider
 ;; NOTE that the AABB box should be re-computed on change of the rigid body's orientation.
 ;; Reference: https://stackoverflow.com/questions/6657479/aabb-of-rotated-sprite
-(s/def ::rectangle-collider (s/keys :req-un [:rectangle/shape ::size]
-                                    :opt-un [::size-aabb]))
+(s/def ::rectangle-collider (s/keys :req-un [:rectangle/shape ::size ::size-aabb]))
 
 (s/def ::collider (s/nilable (s/or :circle ::circle-collider, :rectangle ::rectangle-collider)))
 

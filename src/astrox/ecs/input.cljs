@@ -28,7 +28,7 @@
   "Converts a scalar impulse to the force vector aligned with the ship's current orientation.
    Simulates a thruster engine aligned with the ships direction"
   [rigid-body impulse]
-  (-> (v/rotate v/up (.-orientation rigid-body))
+  (-> (v/rotate v/up (:orientation rigid-body))
       (v/mul impulse)))
 
 (defn- move-player-ship 

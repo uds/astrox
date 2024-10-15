@@ -20,7 +20,7 @@
   [world]
   (-> world
       ;; meteors
-      ;;(create-meteors-field)
+      (create-meteors-field)
 
       ;; player ship
       (ecs/add-entity (e/create-player-ship {:position    (v/vec2d 300 300)
