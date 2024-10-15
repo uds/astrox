@@ -2,8 +2,7 @@
   "Game object views. A view is a visualization of the ECS entity."
   (:require [pixi.js :refer (Container)]
             [tails.math.core :as math]
-            [tails.pixi.core :as px]
-            [clojure.string :as s]))
+            [tails.pixi.core :as px]))
 
 (defprotocol
  ^{:doc "A game object is a view that represents an entity in the game world."}
@@ -30,21 +29,46 @@
   (set-thrust [this thrust] "Sets the view's thrust level as a value in [0..1] range."))
 
 
-(defn- draw-collider
+(defn- create-collider
   "Draws a collider around the sprite"
-  [^js sprite collider]
+  [^js root-sprite collider]
   (let [collider-sprite (case (:shape collider)
                           :circle     (let [radius (:radius collider)]
                                         (px/draw-hollow-circle 0 0 radius 0x00FF00))
                           :rectangle  (let [{width :x height :y} (:size-aabb collider)]
                                         (px/draw-frame (/ width -2) (/ height -2) width height 0x00FF00))
                           (throw (js/Error. "Unsupported collider shape.")))]
-    (.addChild sprite collider-sprite)
+    (.addChild root-sprite collider-sprite)
     collider-sprite))
 
 
 ;; ---------------------------------------------------------------------------------------------------------
 ;; Player ship game object view
+
+
+(defn- mul-aspect
+  "Computes aspect by dividing the object's width by it's height and multiplies resulting aspect by value 'k'."
+  [obj k]
+  (* k (/ (.-width obj) (.-height obj))))
+
+(defn- shield-image
+  "Returns a shield image based on the strength value in [0..1] range."
+  [strength]
+  (let [images [nil             ;; no shield
+                "shield1.png"
+                "shield2.png"
+                "shield3.png"]
+        count   (count images)
+        index   (js/Math.ceil (* strength (dec count)))]
+    (nth images index)))
+
+(defn- update-shield
+  "Updates the shield sprite based on the strength value in [0..1] range.
+   Returns the shield sprite or nil, if shield strength was depleted."
+  [^js shield-sprite strength]
+  (px/set-sprite-texture shield-sprite (shield-image strength))
+  ;; shift shield a bit to compensate for the shield texture's skewed aspect ratio
+  (.. shield-sprite -anchor (set 0.5 (mul-aspect shield-sprite 0.5))))
 
 
 (deftype
@@ -71,7 +95,9 @@
   Debuggable
 
   (show-collider [this collider]
-    (->> (draw-collider root-sprite collider)
+    (when (some? collider-sprite)
+      (.destroy collider-sprite))
+    (->> (create-collider root-sprite collider)
          (set! (.-collider-sprite this))))
 
   (hide-collider [this]
@@ -80,16 +106,11 @@
 
   Destructible
   (set-health [_this health])
-  (set-shield [_this shield])
+  (set-shield [_this strength])
 
   SelfPropelled
   (set-thrust [_this thrust]))
 
-
-(defn- mul-aspect
-  "Computes aspect by dividing the object's width by it's height and multiplies resulting aspect by value 'k'."
-  [obj k]
-  (* k (/ (.-width obj) (.-height obj))))
 
 (defn create-player-ship
   "Creates a ship view"
@@ -97,17 +118,18 @@
   (let [ship     (Container.)
         hull     (px/sprite "playerShip1_orange.png")
         damage   (px/sprite "playerShip1_damage2.png")
-        shield   (px/sprite "shield1.png")
+        shield   (px/sprite)
         exhaust  (px/sprite "fire17.png")]
     (.addChild ship shield)
     (.addChild ship hull)
     (.addChild ship damage)
     (.addChild ship exhaust)
-    (.. shield -anchor (set 0.5 (mul-aspect shield 0.5)))
     (.. hull -anchor (set 0.5))
     (.. damage -anchor (set 0.5))
     (.. exhaust -anchor (set 0.5 0))
     (.. exhaust -position (set 0 40))
+
+    (update-shield shield 0.1)
 
     (->PlayerShip ship damage shield exhaust nil 1 1 0)))
 
@@ -134,7 +156,7 @@
   Debuggable
 
   (show-collider [this collider]
-    (->> (draw-collider root-sprite collider)
+    (->> (create-collider root-sprite collider)
          (set! (.-collider-sprite this))))
 
   (hide-collider [this]
@@ -143,21 +165,21 @@
 
 
 ;; Meteor sprites
-(def ^:private meteor-assets
+(def ^:private meteor-images
   ["meteorBrown_big1.png"
    "meteorBrown_big2.png"
    "meteorBrown_big3.png"
    "meteorBrown_big4.png"])
 
-(defn- random-meteor-asset
+(defn- random-meteor-image
   "Returns a random meteor sprite"
   []
-  (let [idx (math/floor (math/rand-num 0 (count meteor-assets)))]
-    (nth meteor-assets idx)))
+  (let [idx (math/floor (math/rand-num 0 (count meteor-images)))]
+    (nth meteor-images idx)))
 
 (defn create-meteor
   "Creates a meteor"
   []
-  (let [meteor (px/sprite (random-meteor-asset))]
+  (let [meteor (px/sprite (random-meteor-image))]
     (.. meteor -anchor (set 0.5))
     (->Meteor meteor nil)))

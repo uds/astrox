@@ -36,6 +36,11 @@
 (defn to-approx [n]
   (to-fixed n approx-decimals))
 
+(defn clamp
+  "Clamps the value to the [min, max] range."
+  [v min max]
+  (js/Math.min max (js/Math.max v min)))
+
 (defn clamp-abs
   "Returns value clamped to the absolute maximum value."
   [v max-abs]

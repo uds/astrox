@@ -2,7 +2,7 @@
   "Common Pixi functions"
   (:require [clojure.spec.alpha :as s]
             [goog.object :as obj]
-            [pixi.js :as pixijs :refer (Application Container Assets Text TextStyle Sprite TilingSprite BlurFilter Ticker)]
+            [pixi.js :as pixijs :refer (Application Container Assets Text TextStyle Sprite Texture TilingSprite BlurFilter Ticker)]
             ["@pixi/layout" :refer (Layout)]
             ["@pixi/ui" :refer (FancyButton)]
             ["@pixi/filter-drop-shadow" :refer (DropShadowFilter)]
@@ -124,6 +124,12 @@
 ;;----------------------------------------------------------------
 ;; Utils
 
+(defn destroy-cascade
+  "Destroy given PIXI object, including all it's children but keeping shared textures."
+  [^js obj]
+  (.destroy obj #js {:children    true
+                     :texture     false
+                     :baseTexture false}))
 
 (defn container
   "Creates a new PIXI container"
@@ -220,6 +226,7 @@
 ;;----------------------------------------------------------------
 ;; Graphics elements
 
+
 (defn draw-frame
   "Draws a rectangular frame"
   [^js x y width height color]
@@ -278,26 +285,37 @@
 ;;----------------------------------------------------------------
 ;; Widgets
 
-(defn destroy-cascade
-  "Destroy given PIXI object, including all it's children but keeping shared textures."
-  [^js obj]
-  (.destroy obj #js {:children    true
-                     :texture     false
-                     :baseTexture false}))
+
+(defn- asset-name
+  "Returns asset name. The asset can be either a name (e.g. image name) or a keyword."
+  [asset]
+  (if (keyword? asset) (name asset) asset))
 
 (defn sprite
   "Creates sprite from the asset.
    The asset can be either a name (e.g. image name) or a keyword."
-  [asset]
-  (->> (if (keyword? asset) (name asset) asset)
-       (.from Sprite)))
+  ([asset]
+   (if asset
+     (.from Sprite (asset-name asset))
+     (Sprite. nil)))
+  ([]
+   (sprite nil)))
 
 (defn tiling-sprite-from
   "Creates sprite from the asset."
   [asset width height]
-  (let [asset' (if (keyword? asset) (name asset) asset)]
-    (.from TilingSprite asset' #js {:width  width
-                                    :height height})))
+  (.from TilingSprite (asset-name asset) #js {:width  width :height height}))
+
+(defn texture-from
+  "Creates texture from the asset."
+  [asset]
+  (when asset
+    (.from Texture (asset-name asset))))
+
+(defn set-sprite-texture
+  "Sets the sprite texture"
+  [^js sprite asset]
+  (set! (.-texture sprite) (texture-from asset)))
 
 (def default-text-style {:fontFamily         "kenvector-future"
                          :fontSize           24
