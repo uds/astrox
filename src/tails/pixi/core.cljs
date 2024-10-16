@@ -227,23 +227,28 @@
 ;; Graphics elements
 
 
+(defn graphics
+  "Creates a new PIXI Graphics object"
+  []
+  (pixijs/Graphics.))
+
 (defn draw-frame
   "Draws a rectangular frame"
-  [^js x y width height color]
-  (let [graphics (pixijs/Graphics.)]
-    (doto graphics
-      (. lineStyle 1, color)
-      (.drawRect x y width height))
-    graphics))
+  [^js graphics x y width height color]
+  (doto graphics
+    (.clear)
+    (.lineStyle 1, color)
+    (.drawRect x y width height))
+  graphics)
 
 (defn draw-hollow-circle
   "Draws a hollow circle"
-  [^js x y radius color]
-  (let [graphics (pixijs/Graphics.)]
-    (doto graphics
-      (. lineStyle 1, color)
-      (.drawCircle x y radius))
-    graphics))
+  [^js graphics x y radius color]
+  (doto graphics
+    (.clear)
+    (.lineStyle 1, color)
+    (.drawCircle x y radius))
+  graphics)
 
 
 ;;----------------------------------------------------------------

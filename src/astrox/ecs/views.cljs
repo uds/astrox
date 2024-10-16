@@ -29,17 +29,17 @@
   (set-thrust [this thrust] "Sets the view's thrust level as a value in [0..1] range."))
 
 
-(defn- create-collider
-  "Draws a collider around the sprite"
-  [^js root-sprite collider]
-  (let [collider-sprite (case (:shape collider)
-                          :circle     (let [radius (:radius collider)]
-                                        (px/draw-hollow-circle 0 0 radius 0x00FF00))
-                          :rectangle  (let [{width :x height :y} (:size-aabb collider)]
-                                        (px/draw-frame (/ width -2) (/ height -2) width height 0x00FF00))
-                          (throw (js/Error. "Unsupported collider shape.")))]
-    (.addChild root-sprite collider-sprite)
-    collider-sprite))
+(defn- draw-collider-hitbox
+  [graphics collider]
+  (set! (.-visible graphics) true)
+  (let [shape (:shape collider)]
+    (case shape
+      :circle     (let [radius (:radius collider)]
+                    (px/draw-hollow-circle graphics 0 0 radius 0x00FF00))
+      :rectangle  (let [{width :x height :y} (:size-aabb collider)]
+                    (px/draw-frame graphics (/ width -2) (/ height -2) width height 0x00FF00))
+      (throw (js/Error. "Unsupported collider shape.")))))
+
 
 
 ;; ---------------------------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@
              damage-sprite
              shield-sprite
              exhaust-sprite
-             ^:mutable collider-sprite
+             hitbox-sprite
              ^:mutable health
              ^:mutable shield
              ^:mutable thrust]
@@ -94,15 +94,8 @@
 
   Debuggable
 
-  (show-collider [this collider]
-    (when (some? collider-sprite)
-      (.destroy collider-sprite))
-    (->> (create-collider root-sprite collider)
-         (set! (.-collider-sprite this))))
-
-  (hide-collider [this]
-    (.destroy collider-sprite)
-    (set! (.-collider-sprite this) nil))
+  (show-collider [_this collider] (draw-collider-hitbox hitbox-sprite collider))
+  (hide-collider [_this] (set! (.-visible hitbox-sprite) false))
 
   Destructible
   (set-health [_this health])
@@ -119,11 +112,13 @@
         hull     (px/sprite "playerShip1_orange.png")
         damage   (px/sprite "playerShip1_damage2.png")
         shield   (px/sprite)
-        exhaust  (px/sprite "fire17.png")]
+        exhaust  (px/sprite "fire17.png")
+        hitbox   (px/graphics)]
     (.addChild ship shield)
     (.addChild ship hull)
     (.addChild ship damage)
     (.addChild ship exhaust)
+    (.addChild ship hitbox)
     (.. hull -anchor (set 0.5))
     (.. damage -anchor (set 0.5))
     (.. exhaust -anchor (set 0.5 0))
@@ -131,7 +126,7 @@
 
     (update-shield shield 0.1)
 
-    (->PlayerShip ship damage shield exhaust nil 1 1 0)))
+    (->PlayerShip ship damage shield exhaust hitbox 1 1 0)))
 
 
 ;; ---------------------------------------------------------------------------------------------------------
@@ -143,7 +138,7 @@
           It is mutable to allow for changing the sprites during the game object's life cycle.
           It exposes methods to manipulate the view's state."}
  Meteor [root-sprite
-         ^:mutable collider-sprite]
+         hitbox-sprite]
 
   GameObject
 
@@ -155,13 +150,8 @@
 
   Debuggable
 
-  (show-collider [this collider]
-    (->> (create-collider root-sprite collider)
-         (set! (.-collider-sprite this))))
-
-  (hide-collider [this]
-    (.destroy collider-sprite)
-    (set! (.-collider-sprite this) nil)))
+  (show-collider [_this collider] (draw-collider-hitbox hitbox-sprite collider))
+  (hide-collider [_this] (set! (.-visible hitbox-sprite) false)))
 
 
 ;; Meteor sprites
@@ -180,6 +170,8 @@
 (defn create-meteor
   "Creates a meteor"
   []
-  (let [meteor (px/sprite (random-meteor-image))]
+  (let [meteor (px/sprite (random-meteor-image))
+        hitbox (px/graphics)]
+    (.addChild meteor hitbox)
     (.. meteor -anchor (set 0.5))
-    (->Meteor meteor nil)))
+    (->Meteor meteor hitbox)))
