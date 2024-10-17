@@ -15,6 +15,14 @@
   ;; shift shield a bit to compensate for the shield texture's skewed aspect ratio
   (.. shield-sprite -anchor (set 0.5 (cmn/mul-aspect shield-sprite 0.5))))
 
+(defn- update-damage
+  "Updates the damage sprite based on the damage value in [0..1] range.
+   Returns the damage sprite or nil, if no damage is visible."
+  [^js damage-sprite damage]
+  (let [images [nil "playerShip1_damage1.png" "playerShip1_damage2.png" "playerShip1_damage3.png"]
+        image  (cmn/select-image images damage)]
+    (px/set-sprite-texture damage-sprite image)))
+
 
 (deftype
  ^{:doc "A view data type is a container that holds multiple sprites representing different aspects of the game object.
