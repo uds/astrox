@@ -7,13 +7,8 @@
 (defn- shield-image
   "Returns a shield image based on the strength value in [0..1] range."
   [strength]
-  (let [images [nil             ;; no shield
-                "shield1.png"
-                "shield2.png"
-                "shield3.png"]
-        count   (count images)
-        index   (js/Math.ceil (* strength (dec count)))]
-    (nth images index)))
+  (let [images [nil "shield1.png" "shield2.png" "shield3.png"]]
+    (cmn/select-image images strength)))
 
 (defn- update-shield
   "Updates the shield sprite based on the strength value in [0..1] range.
