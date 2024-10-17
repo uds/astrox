@@ -33,7 +33,8 @@
              hitbox-sprite
              ^:mutable health
              ^:mutable shield
-             ^:mutable thrust]
+             ^:mutable thrust
+             exhaust-sprite]
 
   prot/GameObject
 
@@ -53,7 +54,13 @@
   (set-shield [_this strength] (update-shield shield-sprite strength))
 
   prot/SelfPropelled
-  (set-thrust [_this thrust]))
+  (set-thrust [_this thrust] (update-thrust exhaust-sprite thrust)))
+
+(defn- update-thrust
+  "Updates the scale of the exhaust sprite based on the thrust value in [0..1] range."
+  [^js exhaust-sprite thrust]
+  (set! (.-scale.x exhaust-sprite) thrust)
+  (set! (.-scale.y exhaust-sprite) thrust))
 
 
 (defn create-player-ship
