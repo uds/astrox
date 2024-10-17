@@ -18,9 +18,8 @@
   "Updates the damage sprite based on the damage value in [0..1] range.
    Returns the damage sprite or nil, if no damage is visible."
   [^js damage-sprite damage]
-  (let [images [nil "playerShip1_damage1.png" "playerShip1_damage2.png" "playerShip1_damage3.png"]
-        image  (cmn/select-image images damage)]
-    (px/set-sprite-texture damage-sprite image)))
+  (let [images [nil "playerShip1_damage1.png" "playerShip1_damage2.png" "playerShip1_damage3.png"]]
+    (cmn/update-sprite-texture damage-sprite images damage)))
 
 
 (deftype
@@ -50,8 +49,8 @@
   (hide-collider [_this] (set! (.-visible hitbox-sprite) false))
 
   prot/Destructible
-  (set-health [_this health])
-  (set-shield [_this strength])
+  (set-health [_this health] (update-damage damage-sprite (- 1 health)))
+  (set-shield [_this strength] (update-shield shield-sprite strength))
 
   prot/SelfPropelled
   (set-thrust [_this thrust]))
@@ -62,7 +61,7 @@
   []
   (let [ship     (Container.)
         hull     (px/sprite "playerShip1_orange.png")
-        damage   (px/sprite "playerShip1_damage2.png")
+        damage   (px/sprite)
         shield   (px/sprite)
         exhaust  (px/sprite "fire17.png")
         hitbox   (px/graphics)]
@@ -77,5 +76,6 @@
     (.. exhaust -position (set 0 40))
 
     (update-shield shield 0.1)
+    (update-damage damage 0.2)
 
     (->PlayerShip ship damage shield exhaust hitbox 1 1 0)))
