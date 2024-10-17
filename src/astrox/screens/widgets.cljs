@@ -73,7 +73,8 @@
     ;; wraps dialog into the screen overlay that will dim and lock access to the underlying screen
     (-> dialog
         (px/as-modal)
-        (with-hotkeys {kbd/key-code.ESCAPE on-close}))))
+        (with-hotkeys {kbd/key-code.P on-close
+                       kbd/key-code.ESCAPE on-close}))))
 
 (defn banner-panel
   "Shows a banner panel (e.g., 'loading...') in the center of the screen."

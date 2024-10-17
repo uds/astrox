@@ -95,4 +95,5 @@
 
     (-> screen
         ;; add handling of the Pause hot key to the game screen 
-        (w/with-hotkeys {kbd/key-code.P #(state/pause-game true)}))))
+        (w/with-hotkeys {kbd/key-code.P #(state/pause-game true)
+                         kbd/key-code.ESCAPE #(state/pause-game true)}))))
