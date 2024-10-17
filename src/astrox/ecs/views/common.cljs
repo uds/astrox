@@ -17,13 +17,15 @@
   [obj k]
   (* k (/ (.-width obj) (.-height obj))))
 
-(defn update-sprite-texture
-  "Updates the sprite texture based on a value in [0..1] range using a list of images."
-  [^js sprite images value]
-  (let [image (select-image images value)]
-    (px/set-sprite-texture sprite image)))
+(defn select-image
   "Selects an image from a list based on a factor in the range [0..1]."
   [images factor]
   (let [count (count images)
         index (js/Math.ceil (* factor (dec count)))]
     (nth images index)))
+
+(defn update-sprite-texture
+  "Updates the sprite texture based on a value in [0..1] range using a list of images."
+  [^js sprite images factor]
+  (->> (select-image images factor)
+       (px/set-sprite-texture sprite)))

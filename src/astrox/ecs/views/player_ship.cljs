@@ -21,6 +21,12 @@
   (let [images [nil "playerShip1_damage1.png" "playerShip1_damage2.png" "playerShip1_damage3.png"]]
     (cmn/update-sprite-texture damage-sprite images damage)))
 
+(defn- update-thrust
+  "Updates the scale of the exhaust sprite based on the thrust value in [0..1] range."
+  [^js exhaust-sprite thrust]
+  (set! (.-scale.x exhaust-sprite) thrust)
+  (set! (.-scale.y exhaust-sprite) thrust))
+
 
 (deftype
  ^{:doc "A view data type is a container that holds multiple sprites representing different aspects of the game object.
@@ -33,8 +39,7 @@
              hitbox-sprite
              ^:mutable health
              ^:mutable shield
-             ^:mutable thrust
-             exhaust-sprite]
+             ^:mutable thrust]
 
   prot/GameObject
 
@@ -55,12 +60,6 @@
 
   prot/SelfPropelled
   (set-thrust [_this thrust] (update-thrust exhaust-sprite thrust)))
-
-(defn- update-thrust
-  "Updates the scale of the exhaust sprite based on the thrust value in [0..1] range."
-  [^js exhaust-sprite thrust]
-  (set! (.-scale.x exhaust-sprite) thrust)
-  (set! (.-scale.y exhaust-sprite) thrust))
 
 
 (defn create-player-ship
@@ -84,5 +83,6 @@
 
     (update-shield shield 0.1)
     (update-damage damage 0.2)
+    (update-thrust exhaust 1)
 
     (->PlayerShip ship damage shield exhaust hitbox 1 1 0)))
