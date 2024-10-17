@@ -9,9 +9,8 @@
   "Updates the shield sprite based on the strength value in [0..1] range.
    Returns the shield sprite or nil, if shield strength was depleted."
   [^js shield-sprite strength]
-  (let [images [nil "shield1.png" "shield2.png" "shield3.png"]
-        image  (cmn/select-image images strength)]
-    (px/set-sprite-texture shield-sprite image))
+  (let [images [nil "shield1.png" "shield2.png" "shield3.png"]]
+    (cmn/update-sprite-texture shield-sprite images strength))
   ;; shift shield a bit to compensate for the shield texture's skewed aspect ratio
   (.. shield-sprite -anchor (set 0.5 (cmn/mul-aspect shield-sprite 0.5))))
 
