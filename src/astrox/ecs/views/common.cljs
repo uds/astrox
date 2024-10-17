@@ -16,6 +16,7 @@
   "Computes aspect by dividing the object's width by it's height and multiplies resulting aspect by value 'k'."
   [obj k]
   (* k (/ (.-width obj) (.-height obj))))
+
 (defn select-image
   "Selects an image from a list based on a factor in the range [0..1]."
   [images factor]
