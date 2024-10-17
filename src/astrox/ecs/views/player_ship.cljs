@@ -1,8 +1,28 @@
 (ns astrox.ecs.views.player-ship
   (:require [pixi.js :refer (Container)]
             [tails.pixi.core :as px]
-            [astrox.ecs.views.protocols :refer :all]
-            [astrox.ecs.views.common :refer :all]))
+            [astrox.ecs.views.protocols :as prot]
+            [astrox.ecs.views.common :as cmn]))
+
+(defn- shield-image
+  "Returns a shield image based on the strength value in [0..1] range."
+  [strength]
+  (let [images [nil             ;; no shield
+                "shield1.png"
+                "shield2.png"
+                "shield3.png"]
+        count   (count images)
+        index   (js/Math.ceil (* strength (dec count)))]
+    (nth images index)))
+
+(defn- update-shield
+  "Updates the shield sprite based on the strength value in [0..1] range.
+   Returns the shield sprite or nil, if shield strength was depleted."
+  [^js shield-sprite strength]
+  (px/set-sprite-texture shield-sprite (shield-image strength))
+  ;; shift shield a bit to compensate for the shield texture's skewed aspect ratio
+  (.. shield-sprite -anchor (set 0.5 (cmn/mul-aspect shield-sprite 0.5))))
+
 
 (deftype
  ^{:doc "A view data type is a container that holds multiple sprites representing different aspects of the game object.
@@ -17,7 +37,7 @@
              ^:mutable shield
              ^:mutable thrust]
 
-  GameObject
+  prot/GameObject
 
   (root-sprite [_this] root-sprite)
   (destroy [_this] (px/destroy-cascade root-sprite))
@@ -25,16 +45,16 @@
   (set-position [_this pos] (px/set-pos root-sprite pos))
   (set-orientation [_this angle] (set! (.-rotation root-sprite) angle))
 
-  Debuggable
+  prot/Debuggable
 
-  (show-collider [_this collider] (draw-collider-hitbox hitbox-sprite collider))
+  (show-collider [_this collider] (cmn/draw-collider-hitbox hitbox-sprite collider))
   (hide-collider [_this] (set! (.-visible hitbox-sprite) false))
 
-  Destructible
+  prot/Destructible
   (set-health [_this health])
   (set-shield [_this strength])
 
-  SelfPropelled
+  prot/SelfPropelled
   (set-thrust [_this thrust]))
 
 

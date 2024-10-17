@@ -3,7 +3,7 @@
   (:require [tails.ecs.core :as ecs]
             [tails.math.physics :as p]
             [astrox.ecs.components :as c]
-            [astrox.ecs.views :as vw]))
+            [astrox.ecs.views.protocols :as vp]))
 
 (def ^:private debug-show-colliders true)
 
@@ -15,12 +15,12 @@
         {position    :position
          orientation :orientation} rigid-body
         view-obj  (:view view)]
-    (.addChild scene (vw/root-sprite view-obj))
-    (vw/set-position view-obj position)
-    (vw/set-orientation view-obj orientation)
+    (.addChild scene (vp/root-sprite view-obj))
+    (vp/set-position view-obj position)
+    (vp/set-orientation view-obj orientation)
 
     (when debug-show-colliders
-      (vw/show-collider view-obj (:collider rigid-body)))
+      (vp/show-collider view-obj (:collider rigid-body)))
     view))
 
 
@@ -30,8 +30,8 @@
   [rigid-body eid world delta-time]
   (let [rigid-body (p/integration-step rigid-body delta-time)
         view       (:view (ecs/component world eid c/View))]
-    (vw/set-position view (:position rigid-body))
-    (vw/set-orientation view (:orientation rigid-body))
+    (vp/set-position view (:position rigid-body))
+    (vp/set-orientation view (:orientation rigid-body))
     rigid-body))
 
 

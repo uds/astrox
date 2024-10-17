@@ -3,14 +3,16 @@
   (:require [clojure.spec.alpha :as s]
             [tails.ecs.core :as ecs]
             [astrox.ecs.components :as c]
-            [astrox.ecs.views :as vw]))
+            [astrox.ecs.views.player-ship :as pv]
+            [astrox.ecs.views.protocols :as vp]
+            [astrox.ecs.views.meteor :as mv]))
 
 
 (defn- infer-collider
   "Creates collider definition for a given entity. Uses size of the sprite as a collider size.
    Returns a map with collider definition."
   [view]
-  (let [sprite (vw/root-sprite view)
+  (let [sprite (vp/root-sprite view)
         width  (.-width sprite)
         height (.-height sprite)
         ratio  (/ (js/Math.max width height) (js/Math.min width height))]
@@ -30,7 +32,7 @@
   "Creates a player ship entity.
    Returns entity data as a vector: [EntityID, [ComponentInstance]]."
   [fields]
-  (let [view (vw/create-player-ship)
+  (let [view (pv/create-player-ship)
         max-health 100
         phys-props {:linear-damping  0.3
                     :angular-damping 0.5
@@ -52,7 +54,7 @@
   "Creates a meteor entity with given props.
    Returns entity data as a vector: [EntityID, [[ComponentInstance]]."
   [fields]
-  (let [view (vw/create-meteor)
+  (let [view (mv/create-meteor)
         max-health 20
         phys-props {:collider (infer-collider view)}
         eid        (ecs/create-entity)]
