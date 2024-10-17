@@ -4,17 +4,14 @@
             [astrox.ecs.views.protocols :as prot]
             [astrox.ecs.views.common :as cmn]))
 
-(defn- shield-image
-  "Returns a shield image based on the strength value in [0..1] range."
-  [strength]
-  (let [images [nil "shield1.png" "shield2.png" "shield3.png"]]
-    (cmn/select-image images strength)))
 
 (defn- update-shield
   "Updates the shield sprite based on the strength value in [0..1] range.
    Returns the shield sprite or nil, if shield strength was depleted."
   [^js shield-sprite strength]
-  (px/set-sprite-texture shield-sprite (shield-image strength))
+  (let [images [nil "shield1.png" "shield2.png" "shield3.png"]
+        image  (cmn/select-image images strength)]
+    (px/set-sprite-texture shield-sprite image))
   ;; shift shield a bit to compensate for the shield texture's skewed aspect ratio
   (.. shield-sprite -anchor (set 0.5 (cmn/mul-aspect shield-sprite 0.5))))
 
