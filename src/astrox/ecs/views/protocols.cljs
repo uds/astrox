@@ -22,4 +22,4 @@
 (defprotocol
  ^{:doc "A self-propelled view is a game object that can move itself."}
  SelfPropelled
-  (set-thrust [this thrust] "Sets the view's thrust level as a value in [0..1] range."))
+  (set-speed [this speed] "Sets the view's speed level as a value in [0..1] range."))

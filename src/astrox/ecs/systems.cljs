@@ -2,10 +2,13 @@
   "ECS systems."
   (:require [tails.ecs.core :as ecs]
             [tails.math.physics :as p]
+            [tails.math.vector2d :as v]
+            [tails.math.core :as math]
             [astrox.ecs.components :as c]
-            [astrox.ecs.views.protocols :as vp]))
+            [astrox.ecs.views.protocols :as vp]
+            ))
 
-(def ^:private debug-show-colliders true)
+(def ^:private debug-show-colliders false)
 
 (defn- render-new-entity-system
   "Renders entity's view once an entity with the View component is created. 
@@ -29,9 +32,17 @@
    Returns updated rigid-body object."
   [rigid-body eid world delta-time]
   (let [rigid-body (p/integration-step rigid-body delta-time)
-        view       (:view (ecs/component world eid c/View))]
+        view       (-> (ecs/component world eid c/View) :view)]
     (vp/set-position view (:position rigid-body))
     (vp/set-orientation view (:orientation rigid-body))
+
+    ;; FIXME: make it polymorphic
+    ;; update view speed if the entity is self-propelled
+    (when (satisfies? vp/SelfPropelled view)
+      (let [max-speed 300
+            speed     (math/clamp01 (/ (v/length (:velocity rigid-body)) max-speed))]
+        (vp/set-speed view speed)))
+        
     rigid-body))
 
 

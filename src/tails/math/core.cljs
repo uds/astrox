@@ -41,6 +41,11 @@
   [v min max]
   (js/Math.min max (js/Math.max v min)))
 
+(defn clamp01
+  "Clamps the value to the [0, 1] range."
+  [v]
+  (clamp v 0 1))
+
 (defn clamp-abs
   "Returns value clamped to the absolute maximum value."
   [v max-abs]

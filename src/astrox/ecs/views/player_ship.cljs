@@ -2,7 +2,8 @@
   (:require [pixi.js :refer (Container)]
             [tails.pixi.core :as px]
             [astrox.ecs.views.protocols :as prot]
-            [astrox.ecs.views.common :as cmn]))
+            [astrox.ecs.views.common :as cmn]
+            [tails.math.core :as math]))
 
 
 (defn- update-shield
@@ -21,11 +22,13 @@
   (let [images [nil "playerShip1_damage1.png" "playerShip1_damage2.png" "playerShip1_damage3.png"]]
     (cmn/update-sprite-texture damage-sprite images damage)))
 
-(defn- update-thrust
-  "Updates the scale of the exhaust sprite based on the thrust value in [0..1] range."
-  [^js exhaust-sprite thrust]
-  (set! (.-scale.x exhaust-sprite) thrust)
-  (set! (.-scale.y exhaust-sprite) thrust))
+(defn- update-speed
+  "Updates the scale of the exhaust sprite based on the speed value in [0..1] range."
+  [^js exhaust-sprite speed]
+  ;; shift scale so the small exhaust will be shown even when the thrust is low
+  (let [scale  (if (> speed 0.1) (+ 0.6 (* 1 speed)) 0)]
+    (set! (.-scale.x exhaust-sprite) scale)
+    (set! (.-scale.y exhaust-sprite) scale)))
 
 
 (deftype
@@ -39,7 +42,7 @@
              hitbox-sprite
              ^:mutable health
              ^:mutable shield
-             ^:mutable thrust]
+             ^:mutable speed]
 
   prot/GameObject
 
@@ -55,11 +58,32 @@
   (hide-collider [_this] (set! (.-visible hitbox-sprite) false))
 
   prot/Destructible
-  (set-health [_this health] (update-damage damage-sprite (- 1 health)))
-  (set-shield [_this strength] (update-shield shield-sprite strength))
+
+  (set-health [this health]
+    (when (._health-changed? this health)
+      (update-damage damage-sprite (- 1 health))))
+
+  (set-shield [this strength]
+    (when (._shield-changed? this strength)
+      (update-shield shield-sprite strength)))
 
   prot/SelfPropelled
-  (set-thrust [_this thrust] (update-thrust exhaust-sprite thrust)))
+
+  (set-speed [this speed]
+    (when (._speed-changed? this speed)
+      (update-speed exhaust-sprite speed)))
+
+  Object
+
+  (_health-changed? [_this new-health]
+    (not (math/approx= new-health health 0.01)))
+
+  (_shield-changed? [_this new-shield]
+    (not (math/approx= new-shield shield 0.01)))
+
+  (_speed-changed? [_this new-thrust]
+    (not (math/approx= new-thrust speed 0.01))))
+
 
 
 (defn create-player-ship
@@ -83,6 +107,6 @@
 
     (update-shield shield 0.1)
     (update-damage damage 0.2)
-    (update-thrust exhaust 1)
+    (update-speed exhaust 0)
 
     (->PlayerShip ship damage shield exhaust hitbox 1 1 0)))
