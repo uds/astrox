@@ -23,16 +23,7 @@
 
   (set-position [_this pos] (px/set-pos root-sprite pos))
 
-  (set-orientation [_this angle]
-    (when (not (math/approx= angle (.-rotation root-sprite)))
-      (set! (.-rotation root-sprite) angle)
-      ;; keep hitbox sprite aligned with the world up vector, so the AABB hitbox will be correctly shown
-      (cmn/axis-align-hitbox hitbox-sprite)
-
-      ;; FIXME: this is a temporary solution to update collider shape when the sprite rotates
-      (set! collider (cmn/infer-collider meteor-sprite))
-      (when (.-visible hitbox-sprite)
-        (prot/show-collider _this))))
+  (set-orientation [_this angle] (set! (.-rotation root-sprite) angle))
 
   prot/Debuggable
 
@@ -62,6 +53,7 @@
   (let [root   (Container.)
         meteor (px/sprite (random-meteor-image))
         hitbox (px/graphics)
+        ;; collider is never changes and can be inferred from the meteor sprite once
         collider (cmn/infer-collider meteor)]
     (.addChild root meteor)
     (.addChild root hitbox)

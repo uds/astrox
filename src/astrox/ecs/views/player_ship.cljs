@@ -58,21 +58,13 @@
 
   (set-position [_this pos] (px/set-pos root-sprite pos))
 
-  (set-orientation [_this angle]
-    (when (not (math/approx= angle (.-rotation root-sprite)))
-      (set! (.-rotation root-sprite) angle)
-      ;; keep hitbox sprite aligned with the world up vector, so the AABB hitbox will be correctly shown
-      (cmn/axis-align-hitbox hitbox-sprite)
-
-      ;; FIXME: this is a temporary solution to update collider shape when the ship rotates
-      (._update-collider _this)))
+  (set-orientation [_this angle] (set! (.-rotation root-sprite) angle))
 
   prot/Debuggable
 
   (show-collider [this]
     (->> (prot/get-collider this)
-         (cmn/draw-collider-hitbox hitbox-sprite))
-    (cmn/axis-align-hitbox hitbox-sprite))
+         (cmn/draw-collider-hitbox hitbox-sprite)))
 
   (hide-collider [_this] (set! (.-visible hitbox-sprite) false))
 
@@ -113,7 +105,6 @@
     (not (math/approx= new-thrust speed 0.01))))
 
 
-
 (defn create-player-ship
   "Creates a ship view"
   []
@@ -138,6 +129,6 @@
 
     (update-damage damage 1)
     (update-speed exhaust 0)
-    (update-shield shield 0.0)
+    (update-shield shield 0.2)
 
     (->PlayerShip root hull damage shield exhaust hitbox nil 1 1 0)))
