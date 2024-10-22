@@ -4,8 +4,6 @@
             [tails.math.core :as math]
             [tails.math.vector2d :as v]))
 
-(s/def ::range01 (fn [n] (and (number? n) (<= 0 n) (<= n 1))))
-
 (s/def ::position ::v/vector2d)
 (s/def ::size ::v/vector2d)
 (s/def ::radius number?)
@@ -17,11 +15,11 @@
 (s/def ::inverse-mass number?)
 (s/def ::density number?)
 (s/def ::restitution number?)
+
+(s/def ::range01 (fn [n] (and (number? n) (<= 0 n) (<= n 1))))
 (s/def ::linear-damping ::range01)
 (s/def ::angular-damping ::range01)
 
-
-(s/def ::size-aabb ::v/vector2d)
 
 (s/def :circle/shape #{:circle})
 (s/def :rectangle/shape #{:rectangle})
@@ -30,9 +28,7 @@
 (s/def ::circle-collider (s/keys :req-un [:circle/shape ::radius]))
 
 ;; Rectangle collider
-;; NOTE that the AABB box should be re-computed on change of the rigid body's orientation.
-;; Reference: https://stackoverflow.com/questions/6657479/aabb-of-rotated-sprite
-(s/def ::rectangle-collider (s/keys :req-un [:rectangle/shape ::size ::size-aabb]))
+(s/def ::rectangle-collider (s/keys :req-un [:rectangle/shape ::size]))
 
 (s/def ::collider (s/nilable (s/or :circle ::circle-collider, :rectangle ::rectangle-collider)))
 

@@ -5,12 +5,16 @@
  GameObject
   (root-sprite [this] "Returns the view's root sprite.")
   (destroy [this] "Destroys the view.")
+
+  (get-collider [this] "Infers collider shape and size based on the view's sprite dimensions. Returns a map with collider definition.")
+
   (set-position [this pos] "Sets the view's position.")
   (set-orientation [this angle] "Sets the view's orientation."))
 
+
 (defprotocol Debuggable
   ^{:doc "A debuggable view is a game object that can show its collider."}
-  (show-collider [this collider] "Shows the view's collider.")
+  (show-collider [this] "Shows the view's collider.")
   (hide-collider [this] "Hides the view's collider."))
 
 (defprotocol

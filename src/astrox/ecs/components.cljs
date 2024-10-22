@@ -72,7 +72,7 @@
             angular-damping           ;; an amount detracted from the angular velocity on each physics step; range [0..1], default is 0
 
             ;; collision
-            collider                  ;; optional collider information; map with :collider-shape, :size, :size-aabb (recomputed) fields 
+            collider                  ;; optional collider information; map with :collider-shape, :size fields 
             ])
 
 

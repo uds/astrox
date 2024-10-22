@@ -1,5 +1,6 @@
 (ns astrox.ecs.views.meteor
-  (:require [tails.math.core :as math]
+  (:require [pixi.js :refer (Container)]
+            [tails.math.core :as math]
             [tails.pixi.core :as px]
             [astrox.ecs.views.protocols :as prot]
             [astrox.ecs.views.common :as cmn]))
@@ -9,19 +10,36 @@
           It is mutable to allow for changing the sprites during the game object's life cycle.
           It exposes methods to manipulate the view's state."}
  Meteor [root-sprite
-         hitbox-sprite]
+         meteor-sprite
+         hitbox-sprite
+         ^:mutable collider]
 
   prot/GameObject
 
   (root-sprite [_this] root-sprite)
   (destroy [_this] (px/destroy-cascade root-sprite))
 
+  (get-collider [_this] collider)
+
   (set-position [_this pos] (px/set-pos root-sprite pos))
-  (set-orientation [_this angle] (set! (.-rotation root-sprite) angle))
+
+  (set-orientation [_this angle]
+    (when (not (math/approx= angle (.-rotation root-sprite)))
+      (set! (.-rotation root-sprite) angle)
+      ;; keep hitbox sprite aligned with the world up vector, so the AABB hitbox will be correctly shown
+      (cmn/axis-align-hitbox hitbox-sprite)
+
+      ;; FIXME: this is a temporary solution to update collider shape when the sprite rotates
+      (set! collider (cmn/infer-collider meteor-sprite))
+      (when (.-visible hitbox-sprite)
+        (prot/show-collider _this))))
 
   prot/Debuggable
 
-  (show-collider [_this collider] (cmn/draw-collider-hitbox hitbox-sprite collider))
+  (show-collider [this]
+    (->> (prot/get-collider this)
+         (cmn/draw-collider-hitbox hitbox-sprite)))
+
   (hide-collider [_this] (set! (.-visible hitbox-sprite) false)))
 
 
@@ -41,8 +59,11 @@
 (defn create-meteor
   "Creates a meteor"
   []
-  (let [meteor (px/sprite (random-meteor-image))
-        hitbox (px/graphics)]
-    (.addChild meteor hitbox)
+  (let [root   (Container.)
+        meteor (px/sprite (random-meteor-image))
+        hitbox (px/graphics)
+        collider (cmn/infer-collider meteor)]
+    (.addChild root meteor)
+    (.addChild root hitbox)
     (.. meteor -anchor (set 0.5))
-    (->Meteor meteor hitbox)))
+    (->Meteor root meteor hitbox collider)))

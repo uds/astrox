@@ -4,22 +4,7 @@
             [tails.ecs.core :as ecs]
             [astrox.ecs.components :as c]
             [astrox.ecs.views.player-ship :as pv]
-            [astrox.ecs.views.protocols :as vp]
             [astrox.ecs.views.meteor :as mv]))
-
-
-(defn- infer-collider
-  "Creates collider definition for a given entity. Uses size of the sprite as a collider size.
-   Returns a map with collider definition."
-  [view]
-  (let [sprite (vp/root-sprite view)
-        width  (.-width sprite)
-        height (.-height sprite)
-        ratio  (/ (js/Math.max width height) (js/Math.min width height))]
-    ;; based on the sprite dimensions, infer most appropriate collider shape and size
-    (if (<= ratio 1.2)
-      {:shape :circle, :radius (/ (js/Math.max width height) 2)}
-      {:shape :rectangle, :size {:x width :y height} :size-aabb {:x width :y height}})))
 
 
 ;;-----------------------------------------------------------------------------------------------
@@ -35,8 +20,7 @@
   (let [view (pv/create-player-ship)
         max-health 100
         phys-props {:linear-damping  0.3
-                    :angular-damping 0.5
-                    :collider        (infer-collider view)}
+                    :angular-damping 0.5}
         eid        (ecs/create-entity)]
     [eid [(c/->Player)
           (c/->View view)
@@ -56,8 +40,7 @@
   [fields]
   (let [view (mv/create-meteor)
         max-health 20
-        phys-props {:collider (infer-collider view)}
         eid        (ecs/create-entity)]
     [eid [(c/->View view)
           (c/->Health max-health max-health)
-          (c/new-rigid-body (merge phys-props fields))]]))
+          (c/new-rigid-body fields)]]))

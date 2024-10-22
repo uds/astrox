@@ -36,10 +36,12 @@
           It is mutable to allow for changing the sprites during the game object's life cycle.
           It exposes methods to manipulate the view's state."}
  PlayerShip [root-sprite
+             hull-sprite
              damage-sprite
              shield-sprite
              exhaust-sprite
              hitbox-sprite
+             ^:mutable collider-cache   ;; cached collider definition, invalidated on game object shape change
              ^:mutable health
              ^:mutable shield
              ^:mutable speed]
@@ -49,12 +51,29 @@
   (root-sprite [_this] root-sprite)
   (destroy [_this] (px/destroy-cascade root-sprite))
 
+  (get-collider [_this]
+    (when-not collider-cache
+      (set! collider-cache (cmn/infer-collider hull-sprite)))
+    collider-cache)
+
   (set-position [_this pos] (px/set-pos root-sprite pos))
-  (set-orientation [_this angle] (set! (.-rotation root-sprite) angle))
+
+  (set-orientation [_this angle]
+    (when (not (math/approx= angle (.-rotation root-sprite)))
+      (set! (.-rotation root-sprite) angle)
+      ;; keep hitbox sprite aligned with the world up vector, so the AABB hitbox will be correctly shown
+      (cmn/axis-align-hitbox hitbox-sprite)
+
+      ;; FIXME: this is a temporary solution to update collider shape when the ship rotates
+      (._update-collider _this)))
 
   prot/Debuggable
 
-  (show-collider [_this collider] (cmn/draw-collider-hitbox hitbox-sprite collider))
+  (show-collider [this]
+    (->> (prot/get-collider this)
+         (cmn/draw-collider-hitbox hitbox-sprite))
+    (cmn/axis-align-hitbox hitbox-sprite))
+
   (hide-collider [_this] (set! (.-visible hitbox-sprite) false))
 
   prot/Destructible
@@ -65,7 +84,9 @@
 
   (set-shield [this strength]
     (when (._shield-changed? this strength)
-      (update-shield shield-sprite strength)))
+      (update-shield shield-sprite strength)
+      ;; update collider shape  when the shield changes (e.g. when shield is depleted)
+      (._update-collider this)))
 
   prot/SelfPropelled
 
@@ -74,6 +95,13 @@
       (update-speed exhaust-sprite speed)))
 
   Object
+
+  (_update-collider [this]
+    ;; invalidate collider data cache
+    (set! collider-cache nil)
+    ;; re-draw collider if it's visible
+    (when (.-visible hitbox-sprite)
+      (prot/show-collider this)))
 
   (_health-changed? [_this new-health]
     (not (math/approx= new-health health 0.01)))
@@ -89,24 +117,27 @@
 (defn create-player-ship
   "Creates a ship view"
   []
-  (let [ship     (Container.)
+  (let [root     (Container.)
         hull     (px/sprite "playerShip1_orange.png")
         damage   (px/sprite)
         shield   (px/sprite)
         exhaust  (px/sprite "fire17.png")
         hitbox   (px/graphics)]
-    (.addChild ship shield)
-    (.addChild ship hull)
-    (.addChild ship damage)
-    (.addChild ship exhaust)
-    (.addChild ship hitbox)
+
+    (.addChild root hull)
+    (.addChild root exhaust)
+    (.addChild root hitbox)
+    ;; damage and shield sprites are added to the hull sprite so the hitbox and exhaust sprites are not affecting ship dimensions
+    (.addChild hull shield)
+    (.addChild hull damage)
+
     (.. hull -anchor (set 0.5))
     (.. damage -anchor (set 0.5))
     (.. exhaust -anchor (set 0.5 0))
     (.. exhaust -position (set 0 40))
 
-    (update-shield shield 0.1)
-    (update-damage damage 0.2)
+    (update-damage damage 1)
     (update-speed exhaust 0)
+    (update-shield shield 0.0)
 
-    (->PlayerShip ship damage shield exhaust hitbox 1 1 0)))
+    (->PlayerShip root hull damage shield exhaust hitbox nil 1 1 0)))
