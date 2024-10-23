@@ -34,8 +34,8 @@
         game-ticker     (px/create-ticker)
         !pause-reaction (make-pause-reaction game-ticker)
         resize-app-fn   #(px/resize-app app)]
-    (px/setup-cursors app {:default "url('/images/ui/cursor_pointer3D_shadow.png'),auto"
-                           :pointer "url('/images/ui/cursor_hand.png'),auto"})
+    (px/setup-cursors app {:default "url('images/ui/cursor_pointer3D_shadow.png'),auto"
+                           :pointer "url('images/ui/cursor_hand.png'),auto"})
 
     (mount-view (.-view app))
 
@@ -87,7 +87,7 @@
   (let [{app         :app
          game-ticker :game-ticker} app-data
         scene                      (px/container) ;; parent container of all game objects in the game
-        preload-bundle             {:loading_panel "/images/ui/loading_panel.png"}]
+        preload-bundle             {:loading_panel "images/ui/loading_panel.png"}]
     (px/set-root-layout app (main-screen scene))
     (px/load-assets-bundle :preload preload-bundle load-title-screen)
     (start-game-loop scene game-ticker)))

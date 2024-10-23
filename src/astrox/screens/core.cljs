@@ -22,13 +22,13 @@
 (defn load-title-screen
   "Triggers loading of the title screen."
   []
-  (let [bundle {:title-background "/images/title-background-2.jpg"
-                :ui-assets        "/images/ui/ui.json"}]
+  (let [bundle {:title-background "images/title-background-2.jpg"
+                :ui-assets        "images/ui/ui.json"}]
     (load-screen :title-screen bundle :title-screen)))
 
 (defn load-game-screen
   "Triggers loading of the game screen."
   []
-  (let [bundle {:game-background "/images/game-background.png"
-                :game-assets     "/images/game/game.json"}]
+  (let [bundle {:game-background "images/game-background.png"
+                :game-assets     "images/game/game.json"}]
     (load-screen :game-screen bundle :game-screen)))
