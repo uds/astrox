@@ -1,3 +1,7 @@
+# Overview
+
+AstroX is a 2D space-themed game built using ClojureScript and the Pixi.js library. It features a dynamic game environment with various interactive elements, including player ships, meteors, and more. The project is designed to be modular and extendable, allowing for easy addition of new features and game mechanics.
+
 # Project Setup
 
 ## How to setup tools 
