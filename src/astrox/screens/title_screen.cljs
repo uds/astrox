@@ -62,8 +62,6 @@
                       " - space shooter\n"
                       " - UI pack\n"
                       " - UI space pack\n\n\n"
-                      "Utility AI inspired by\n\n"
-                      " - Kevin Dill & Dave Mark\n\n\n"
                       "Reactive signal graphs inspired by\n\n"
                       " - day8/re-frame\n\n\n"
                       "ECS system inspired by\n\n"

@@ -12,14 +12,16 @@
     <meta name="apple-mobile-web-app-title" content="AstroX" />
     <link rel="manifest" href="/favicon/site.webmanifest" />
 
-    <link rel="preload" as="font" href="/fonts/kenvector_future.ttf" type="font/ttf" crossorigin="anonymous">
+    <!-- Preload the font to avoid flash-rendering with the default font. -->
+    <link rel="preload" as="font" href="/fonts/Kenney Future.ttf" type="font/ttf" crossorigin="anonymous">
+
     <style>
         @font-face {
             font-family: 'kenvector-future';
             font-style: normal;
             font-weight: 300;
             src: local('kenvector-future'), local('kenvector-future-regular'),
-                    url('/fonts/kenvector_future.ttf') format('truetype');
+                    url('/fonts/Kenney Future.ttf') format('truetype');
         }           
         * { 
             padding: 0; 
