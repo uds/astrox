@@ -16,8 +16,9 @@
   "Detects collision between two circles.
    Returns true if a collision occurred."
   [pos1 radius1 pos2 radius2]
-  (let [distance (v/distance pos1 pos2)]
-    (< distance (+ radius1 radius2))))
+  (let [d (v/distance-squared pos1 pos2)
+        r (+ radius1 radius2)]
+    (< d (* r r))))
 
 
 (s/fdef rectangle-rectangle-collision?

@@ -1,7 +1,7 @@
 (ns astrox.ecs.systems
   "ECS systems."
   (:require [tails.ecs.core :as ecs]
-            [tails.math.physics :as p]
+            [tails.physics.core :as p]
             [tails.math.vector2d :as v]
             [tails.math.core :as math]
             [astrox.ecs.components :as c]

@@ -1,4 +1,4 @@
-(ns tails.math.physics
+(ns tails.physics.core
   "Simple 2D physics simulation"
   (:require [clojure.spec.alpha :as s]
             [tails.math.core :as math]

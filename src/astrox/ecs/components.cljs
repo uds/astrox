@@ -3,7 +3,7 @@
    Each component is represented as a record that defines a specific trait of an ECS entity."
   (:require [clojure.spec.alpha :as s]
             [tails.math.vector2d :as v]
-            [tails.math.physics :as p]))
+            [tails.physics.core :as p]))
 
 
 ;; -------------------------------------------------------------------------------------------------------
