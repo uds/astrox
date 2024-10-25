@@ -67,7 +67,5 @@
         entities (for [i (range num-entities)]
                    {:position (v/vec2d (rand-int 1000) (rand-int 1000))
                     :collider {:shape :circle :radius (rand-int 10)}})
-        start-time (System/nanoTime)
-        _ (broad-phase entities)
-        end-time (System/nanoTime)]
-    (println "Broad-phase benchmark:" (/ (- end-time start-time) 1e6) "ms")))
+        result (time (broad-phase entities))]
+    (println "Broad-phase benchmark result:" result)))
