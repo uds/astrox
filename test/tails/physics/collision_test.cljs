@@ -38,4 +38,19 @@
           entity3 {:position (v/vec2d 3 0) :collider {:shape :circle :radius 1}}
           entities [entity1 entity2 entity3]
           collided-pairs (#'c/broad-phase entities)]
+    (let [entity1 {:position (v/vec2d 0 0) :collider {:shape :circle :radius 1}}
+          entity2 {:position (v/vec2d 1 0) :collider {:shape :circle :radius 1}}
+          entity3 {:position (v/vec2d 3 0) :collider {:shape :circle :radius 1}}
+          collider-pairs [[entity1 entity2] [entity1 entity3] [entity2 entity3]]
+          collision-infos (#'c/narrow-phase collider-pairs)]
+      (is (= (count collision-infos) 1))
+      (is (= (:penetration (first collision-infos)) 1))
+      (is (= (:normal (first collision-infos)) (v/normalize (v/vec2d 1 0)))))))
+
+(deftest test-narrow-phase
+  (testing "Narrow-phase collision detection"
+          entity2 {:position (v/vec2d 1 0) :collider {:shape :circle :radius 1}}
+          entity3 {:position (v/vec2d 3 0) :collider {:shape :circle :radius 1}}
+          entities [entity1 entity2 entity3]
+          collided-pairs (#'c/broad-phase entities)]
       (is (= (set collided-pairs) #{[entity1 entity2] [entity2 entity3] [entity1 entity3]})))))
