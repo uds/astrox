@@ -9,6 +9,7 @@
 (s/def ::normal ::v/vector2d)
 (s/def ::collision-info (s/keys :req-un [::penetration ::normal]))
 (s/def ::entity (s/keys :req-un [::c/position ::c/collider]))
+(s/def ::collider-pairs (s/coll-of (s/tuple ::entity ::entity)))
 
 
 (defn- circle-vs-circle?
@@ -35,21 +36,19 @@
   "Determines if a collision occurs between two entities based on their position and collider data.
    Currently supports only circle colliders."
   [entity1 entity2]
-  (let [{pos1 :position, collider1 :collider} entity1
-        {pos2 :position, collider2 :collider} entity2
-        {shape1 :shape, radius1 :radius} collider1
-        {shape2 :shape, radius2 :radius} collider2]
+  (let [{pos1 :position, {shape1 :shape, radius1 :radius} :collider} entity1
+        {pos2 :position, {shape2 :shape, radius2 :radius} :collider} entity2]
     (cond
       (and (= shape1 :circle) (= shape2 :circle))
       (circle-vs-circle? pos1 radius1 pos2 radius2)
 
       :else
-      (throw (ex-info "Unsupported collider type" {:collider1 collider1 :collider2 collider2})))))
+      (throw (ex-info "Unsupported collider type" {:entity1 entity1, :entity2 entity2})))))
 
 
 (s/fdef broad-phase
   :args (s/cat :entities (s/coll-of ::entity))
-  :ret (s/coll-of (s/tuple ::entity ::entity)))
+  :ret ::collider-pairs)
 
 (defn- broad-phase
   "Returns a sequence of pairs of entities that are potentially colliding."
@@ -63,16 +62,13 @@
 
 
 (s/fdef narrow-phase
-  :args (s/cat :collider-pairs (s/coll-of (s/tuple ::entity ::entity)))
+  :args (s/cat :collider-pairs ::collider-pairs)
   :ret (s/coll-of ::collision-info))
 
 (defn- narrow-phase
   "Checks each pair of colliders for actual collision and returns a collection of collision-info structures."
   [collider-pairs]
-  (keep (fn [[entity1 entity2]]
-          (let [{pos1 :position, collider1 :collider} entity1
-                {pos2 :position, collider2 :collider} entity2]
-            (collides? pos1 collider1 pos2 collider2)))
+  (keep (fn [[entity1 entity2]] (collides? entity1 entity2))
         collider-pairs))
 
 
@@ -85,4 +81,3 @@
   [entities]
   (-> (broad-phase entities)
       (narrow-phase)))
-

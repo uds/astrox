@@ -2,7 +2,7 @@
   "Simple 2D physics simulation"
   (:require [tails.math.core :as math]
             [tails.math.vector2d :as v]
-            [tails.physics.collision :as cln]))
+            [tails.physics.collision]))
 
 
 ;; Min dumping coefficient value
