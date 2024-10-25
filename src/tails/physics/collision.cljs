@@ -58,3 +58,18 @@
     (for [[i entity1] indexed
           [_ entity2] (drop (inc i) indexed)]
       [entity1 entity2])))
+
+(s/fdef narrow-phase
+  :args (s/cat :collider-pairs (s/coll-of (s/tuple ::entity ::entity)))
+  :ret (s/coll-of ::collision-info))
+
+(defn- narrow-phase
+  "Checks each pair of colliders for actual collision and returns a collection of collision-info structures."
+  [collider-pairs]
+  (keep (fn [[entity1 entity2]]
+          (let [pos1 (:position entity1)
+                collider1 (:collider entity1)
+                pos2 (:position entity2)
+                collider2 (:collider entity2)]
+            (collides? pos1 collider1 pos2 collider2)))
+        collider-pairs))
