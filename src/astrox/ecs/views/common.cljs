@@ -1,6 +1,5 @@
 (ns astrox.ecs.views.common
-  (:require [tails.pixi.core :as px]
-            [tails.math.core :as math]))
+  (:require [tails.pixi.core :as px]))
 
 
 (defn infer-collider
@@ -9,14 +8,18 @@
   [^js sprite]
   ;; use local bounds to get the compound sprite dimensions (e.g. including it's children)
   (let [local-bounds (.getLocalBounds sprite)
-        width  (.-width local-bounds)
-        height (.-height local-bounds)
-        ratio  (/ (js/Math.max width height) (js/Math.min width height))]
+        width      (.-width local-bounds)
+        height     (.-height local-bounds)]
+
+    ;; for now we support only circle shape
+    {:shape :circle, :radius (/ (+ width height) 4)}
 
     ;; based on the sprite dimensions, infer most appropriate collider shape and size
-    (if (<= ratio 1.2)
-      {:shape :circle, :radius (/ (js/Math.max width height) 2)}
-      {:shape :rectangle, :size {:x width :y height}})))
+    ;; (let [ratio (/ (js/Math.max width height) (js/Math.min width height))])
+    ;;   (if (<= ratio 1.2)
+    ;;     {:shape :circle, :radius (/ (js/Math.max width height) 2)}
+    ;;     {:shape :rectangle, :size {:x width :y height}}))
+    ))
 
 (defn draw-collider-hitbox
   [graphics collider]

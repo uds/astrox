@@ -3,12 +3,14 @@
             [tails.pixi.keyboard :as kbd]
             [tails.rinc.reaction :as r]
             [tails.ecs.core :as ecs]
+            [tails.physics.collision :as cn]
             [tails.debug :refer (debug?)]
             [tails.ui-stats :as stats]
             [astrox.screens.main-screen :refer (main-screen)]
             [astrox.screens.core :refer (load-title-screen)]
             [astrox.screens.state :as state]
             [astrox.ecs.world :as world]
+            [astrox.ecs.components :as c]
             [astrox.ecs.input :refer (process-input)]
             [astrox.ecs.systems :refer (all-systems)]))
 
@@ -18,7 +20,7 @@
     (.remove old-view-el))
   (js/document.body.appendChild view-el))
 
-(defn- make-pause-reaction 
+(defn- make-pause-reaction
   "Makes a reaction that will pause game-ticker on change of the !pause? ratom."
   [game-ticker]
   (r/reaction* (px/pause-ticker game-ticker @state/!pause?)))
@@ -55,7 +57,7 @@
   (r/dispose! !pause-reaction)
   (px/destroy-app app))
 
-(defn- update-world 
+(defn- update-world
   "Update ECS world by processing player input and executing given systems against the current state of the world."
   [world systems delta-time delta-frame]
   (-> (process-input world)
@@ -67,8 +69,13 @@
    It's value will be around 1 when the FPS is around 60."
   [systems delta-frame]
   (when debug? (stats/begin-stats))
+  ;; execute ECS systems and update the world
   (let [delta-time (px/delta-frame->delta-time delta-frame)]
     (swap! world/!ecs-world update-world systems delta-time delta-frame))
+  ;; call collision detection
+  (let [rigid-bodies (ecs/components-of-type @world/!ecs-world c/RigidBody)
+        collisions (cn/detect-collisions rigid-bodies)]
+    (when debug? (println "Collisions:" collisions)))
   (when debug? (stats/end-stats)))
 
 (defn- start-game-loop [scene, ^js ticker]

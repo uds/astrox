@@ -187,6 +187,14 @@
   (get-in world [:components component-type entity-id]))
 
 
+(s/fdef components-of-type :args (s/cat :world ::world, :component-type ::component-type), :ret (s/nilable (s/coll-of ::component-instance)))
+
+(defn components-of-type
+  "Returns a collection of all components of the given type."
+  [world component-type]
+  (vals (get-in world [:components component-type])))
+
+
 (s/fdef entity-components :args (s/cat :world ::world, :entity-id ::entity-id), :ret (s/coll-of ::component-instance))
 
 (defn entity-components

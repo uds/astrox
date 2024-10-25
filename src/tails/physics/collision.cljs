@@ -48,8 +48,8 @@
 
 
 (s/fdef broad-phase
-  :args (s/cat :entities (s/coll-of ::entity))
-  :ret ::collider-pairs)
+  :args (s/cat :entities (s/nilable (s/coll-of ::entity)))
+  :ret (s/nilable ::collider-pairs))
 
 (defn- broad-phase
   "Returns a sequence of pairs of entities that are potentially colliding."
@@ -65,8 +65,8 @@
 
 
 (s/fdef narrow-phase
-  :args (s/cat :collider-pairs ::collider-pairs)
-  :ret (s/coll-of ::collision-info))
+  :args (s/cat :collider-pairs (s/nilable ::collider-pairs))
+  :ret (s/nilable (s/coll-of ::collision-info)))
 
 (defn- narrow-phase
   "Checks each pair of colliders for actual collision and returns a collection of collision-info structures."
@@ -76,8 +76,8 @@
 
 
 (s/fdef detect-collisions
-  :args (s/cat :entities (s/coll-of ::entity))
-  :ret (s/coll-of ::collision-info))
+  :args (s/cat :entities (s/nilable (s/coll-of ::entity)))
+  :ret (s/nilable (s/coll-of ::collision-info)))
 
 (defn detect-collisions
   "Detects collisions among a collection of entities by combining broad-phase and narrow-phase detection."
