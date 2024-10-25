@@ -28,9 +28,9 @@
       (is (not (nil? (#'c/collides? entity1 entity3))))))
 
   (testing "Unsupported collider type throws exception"
-    (let [circle-collider {:shape :circle :radius 1}
-          rectangle-collider {:shape :rectangle :size (v/vec2d 2 2)}]
-      (is (thrown? ExceptionInfo (#'c/collides? (v/vec2d 0 0) circle-collider (v/vec2d 0 0) rectangle-collider))))))
+    (let [entity1 {:position (v/vec2d 0 0) :collider {:shape :circle :radius 1}}
+          entity2 {:position (v/vec2d 0 0) :collider {:shape :rectangle :size (v/vec2d 2 2)}}]
+      (is (thrown? ExceptionInfo (#'c/collides? entity1 entity2))))))
 
 (deftest test-broad-phase
   (testing "Broad-phase collision detection"
