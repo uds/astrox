@@ -4,6 +4,17 @@
             [tails.math.vector2d :as v]
             [tails.physics.core :as p]))
 
+(defn broad-phase
+  "Returns a sequence of pairs of rigid bodies that are potentially colliding."
+  [rigid-bodies]
+  (for [i (range (count rigid-bodies))
+        j (range (inc i) (count rigid-bodies))
+        :let [body1 (nth rigid-bodies i)
+              body2 (nth rigid-bodies j)]
+        :when (not (nil? (p/collides? (:position body1) (:collider body1)
+                                      (:position body2) (:collider body2))))]
+    [body1 body2]))
+
 
 (s/def ::penetration number?)
 (s/def ::normal ::v/vector2d)
