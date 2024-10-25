@@ -27,16 +27,18 @@
       nil)))
 
 
-(s/fdef collides? 
-  :args (s/cat :pos1 ::v/vector2d, :collider1 ::c/collider, :pos2 ::v/vector2d, :collider2 ::c/collider)
+(s/fdef collides?
+  :args (s/cat :entity1 ::entity, :entity2 ::entity)
   :ret (s/nilable ::collision-info))
 
 (defn- collides?
-  "Determines if a collision occurs between two objects based on their position and collider data.
+  "Determines if a collision occurs between two entities based on their position and collider data.
    Currently supports only circle colliders."
-  [pos1 collider1 pos2 collider2]
-  (let [{shape1 :shape radius1 :radius} collider1
-        {shape2 :shape radius2 :radius} collider2]
+  [entity1 entity2]
+  (let [{pos1 :position, collider1 :collider} entity1
+        {pos2 :position, collider2 :collider} entity2
+        {shape1 :shape, radius1 :radius} collider1
+        {shape2 :shape, radius2 :radius} collider2]
     (cond
       (and (= shape1 :circle) (= shape2 :circle))
       (circle-vs-circle? pos1 radius1 pos2 radius2)
