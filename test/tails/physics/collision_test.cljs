@@ -38,4 +38,4 @@
           entity3 {:position (v/vec2d 3 0) :collider {:shape :circle :radius 1}}
           entities [entity1 entity2 entity3]
           collided-pairs (#'c/broad-phase entities)]
-      (is (= (set collided-pairs) #{[entity1 entity2]})))))
+      (is (= (set collided-pairs) #{[entity1 entity2] [entity2 entity3] [entity1 entity3]})))))

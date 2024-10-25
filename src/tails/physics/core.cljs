@@ -1,51 +1,9 @@
 (ns tails.physics.core
   "Simple 2D physics simulation"
-  (:require [clojure.spec.alpha :as s]
-            [tails.math.core :as math]
-            [tails.math.vector2d :as v]))
+  (:require [tails.math.core :as math]
+            [tails.math.vector2d :as v]
+            [tails.physics.collision :as cln]))
 
-(s/def ::position ::v/vector2d)
-(s/def ::size ::v/vector2d)
-(s/def ::radius number?)
-(s/def ::orientation number?)
-(s/def ::velocity ::v/vector2d)
-(s/def ::angular-velocity number?)
-(s/def ::force ::v/vector2d)
-(s/def ::torque number?)
-(s/def ::inverse-mass number?)
-(s/def ::density number?)
-(s/def ::restitution number?)
-
-(s/def ::range01 (fn [n] (and (number? n) (<= 0 n) (<= n 1))))
-(s/def ::linear-damping ::range01)
-(s/def ::angular-damping ::range01)
-
-
-(s/def :circle/shape #{:circle})
-(s/def :rectangle/shape #{:rectangle})
-
-;; Circle collider
-(s/def ::circle-collider (s/keys :req-un [:circle/shape ::radius]))
-
-;; Rectangle collider
-(s/def ::rectangle-collider (s/keys :req-un [:rectangle/shape ::size]))
-
-(s/def ::collider (s/nilable (s/or :circle ::circle-collider, :rectangle ::rectangle-collider)))
-
-(s/def ::rigid-body (s/keys :opt-un [
-                                     ::position
-                                     ::orientation
-                                     ::velocity
-                                     ::angular-velocity
-                                     ::force
-                                     ::torque
-                                     ::inverse-mass
-                                     ::inverse-inertia
-                                     ::density
-                                     ::restitution
-                                     ::linear-damping
-                                     ::angular-damping
-                                     ::collider]))
 
 ;; Min dumping coefficient value
 ;; It is selected as shown in https://github.com/jonpena/Cirobb/blob/06e36c514bcfdceb172557f6e1ab41e91752f479/cirobb/Scene.cpp#L103
