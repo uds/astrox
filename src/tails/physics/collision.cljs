@@ -64,16 +64,6 @@
   :args (s/cat :collider-pairs (s/coll-of (s/tuple ::entity ::entity)))
   :ret (s/coll-of ::collision-info))
 
-(s/fdef detect-collisions
-  :args (s/cat :entities (s/coll-of ::entity))
-  :ret (s/coll-of ::collision-info))
-
-(defn detect-collisions
-  "Detects collisions among a collection of entities by combining broad-phase and narrow-phase detection."
-  [entities]
-  (let [potential-collisions (broad-phase entities)]
-    (narrow-phase potential-collisions)))
-
 (defn- narrow-phase
   "Checks each pair of colliders for actual collision and returns a collection of collision-info structures."
   [collider-pairs]
@@ -82,3 +72,15 @@
                 {pos2 :position, collider2 :collider} entity2]
             (collides? pos1 collider1 pos2 collider2)))
         collider-pairs))
+
+
+(s/fdef detect-collisions
+  :args (s/cat :entities (s/coll-of ::entity))
+  :ret (s/coll-of ::collision-info))
+
+(defn detect-collisions
+  "Detects collisions among a collection of entities by combining broad-phase and narrow-phase detection."
+  [entities]
+  (-> (broad-phase entities)
+      (narrow-phase)))
+
