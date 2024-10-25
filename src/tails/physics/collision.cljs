@@ -2,13 +2,13 @@
   "Collision detection and resolution."
   (:require [clojure.spec.alpha :as s]
             [tails.math.vector2d :as v]
-            [tails.physics.core :as p]))
+            [tails.physics.common :as c]))
 
 
 (s/def ::penetration number?)
 (s/def ::normal ::v/vector2d)
 (s/def ::collision-info (s/keys :req-un [::penetration ::normal]))
-(s/def ::entity (s/keys :req-un [::p/position ::p/collider]))
+(s/def ::entity (s/keys :req-un [::c/position ::c/collider]))
 
 
 (defn- circle-vs-circle?
@@ -28,7 +28,7 @@
 
 
 (s/fdef collides? 
-  :args (s/cat :pos1 ::v/vector2d, :collider1 ::p/collider, :pos2 ::v/vector2d, :collider2 ::p/collider)
+  :args (s/cat :pos1 ::v/vector2d, :collider1 ::c/collider, :pos2 ::v/vector2d, :collider2 ::c/collider)
   :ret (s/nilable ::collision-info))
 
 (defn- collides?
@@ -52,20 +52,22 @@
 (defn- broad-phase
   "Returns a sequence of pairs of entities that are potentially colliding."
   [entities]
-  ;; TODO: use sequence partitioning to avoid checking the same pair twice?
-  (for [i (range (count entities))
-        j (range (inc i) (count entities))
-        :let [entity1 (nth entities i)
-              entity2 (nth entities j)]
-        :when (not (nil? (collides? (:position entity1) (:collider entity1)
-                                    (:position entity2) (:collider entity2))))]
-    [entity1 entity2]))
+  ;; converting to vector makes it a bit faster, probably because of random access
+  (let [indexed (vec (map-indexed vector entities))]
+    (for [[i entity1] indexed
+          [_ entity2] (drop (inc i) indexed)]
+      [entity1 entity2])))
 
 ;; Benchmark for broad-phase function
 (comment
+  ;; for nested loop           - 500 -> 5000ms
+  ;; for map-indexed           - 1000 -> 360ms
+  ;; for map-indexed #2        - 1000 -> 210ms
+  ;; for map-indexed drop/vec  - 1000 -> 160ms
+  
   (let [num-entities 1000
-        entities (for [i (range num-entities)]
+        entities (for [_ (range num-entities)]
                    {:position (v/vec2d (rand-int 1000) (rand-int 1000))
-                    :collider {:shape :circle :radius (rand-int 10)}})
-        result (time (broad-phase entities))]
-    (println "Broad-phase benchmark result:" result)))
+                    :collider {:shape :circle :radius (rand-int 10)}})]
+    (time (do (doall (broad-phase entities)) nil)))
+  )
