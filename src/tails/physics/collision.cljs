@@ -4,12 +4,11 @@
             [tails.math.vector2d :as v]
             [tails.physics.core :as p]))
 
-(s/fdef collides?
-  :args (s/cat :pos1 ::v/vector2d
-               :collider1 ::p/collider
-               :pos2 ::v/vector2d
-               :collider2 ::p/collider)
-  :ret (s/nilable (s/keys :req-un [:penetration :normal])))
+
+(s/def ::penetration number?)
+(s/def ::normal ::v/vector2d)
+(s/def ::collision-info (s/keys :req-un [::penetration ::normal]))
+
 
 (defn- circle-vs-circle?
   "Detects collision between two circles and returns collision info with penetration depth and normal vector."
@@ -25,6 +24,10 @@
           {:penetration (- radius-sum distance)
            :normal (v/normalize vector)}))
       nil)))
+
+
+(s/fdef collides? :args (s/cat :pos1 ::v/vector2d, :collider1 ::p/collider, :pos2 ::v/vector2d, :collider2 ::p/collider)
+  :ret (s/nilable ::collision-info))
 
 (defn- collides?
   "Determines if a collision occurs between two objects based on their position and collider data.
