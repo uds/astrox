@@ -8,7 +8,8 @@
   (let [vector (v/sub pos2 pos1)
         radius-sum (+ radius1 radius2)]
     (if (< (v/length-squared vector) (* radius-sum radius-sum))
-      (let [distance (v/length vector)]
+      (let [distance (v/length vector)
+            normal (if (zero? distance) (v/vec2d 1 0) (v/normalize vector))]
         {:penetration (- radius-sum distance)
-         :normal (v/normalize vector)})
+         :normal normal})
       nil)))
