@@ -4,6 +4,10 @@
             [tails.math.vector2d :as v]
             [tails.physics.core :as p]))
 
+(s/fdef broad-phase
+  :args (s/cat :rigid-bodies (s/coll-of ::p/rigid-body))
+  :ret (s/coll-of (s/tuple ::p/rigid-body ::p/rigid-body)))
+
 
 (s/def ::penetration number?)
 (s/def ::normal ::v/vector2d)
