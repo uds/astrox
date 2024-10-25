@@ -4,14 +4,11 @@
             [tails.math.vector2d :as v]
             [tails.physics.core :as p]))
 
-(s/fdef broad-phase
-  :args (s/cat :rigid-bodies (s/coll-of ::p/rigid-body))
-  :ret (s/coll-of (s/tuple ::p/rigid-body ::p/rigid-body)))
-
 
 (s/def ::penetration number?)
 (s/def ::normal ::v/vector2d)
 (s/def ::collision-info (s/keys :req-un [::penetration ::normal]))
+(s/def ::entity (s/keys :req-un [::p/position ::p/collider]))
 
 
 (defn- circle-vs-circle?
@@ -30,7 +27,8 @@
       nil)))
 
 
-(s/fdef collides? :args (s/cat :pos1 ::v/vector2d, :collider1 ::p/collider, :pos2 ::v/vector2d, :collider2 ::p/collider)
+(s/fdef collides? 
+  :args (s/cat :pos1 ::v/vector2d, :collider1 ::p/collider, :pos2 ::v/vector2d, :collider2 ::p/collider)
   :ret (s/nilable ::collision-info))
 
 (defn- collides?
@@ -47,15 +45,18 @@
       (throw (ex-info "Unsupported collider type" {:collider1 collider1 :collider2 collider2})))))
 
 
+(s/fdef broad-phase
+  :args (s/cat :entities (s/coll-of ::entity))
+  :ret (s/coll-of (s/tuple ::entity ::entity)))
+
 (defn- broad-phase
-  "Returns a sequence of pairs of rigid bodies that are potentially colliding."
-  [rigid-bodies]
-  (for [i (range (count rigid-bodies))
-        j (range (inc i) (count rigid-bodies))
-        :let [body1 (nth rigid-bodies i)
-              body2 (nth rigid-bodies j)]
-        :when (not (nil? (collides? (:position body1) (:collider body1)
-                                    (:position body2) (:collider body2))))]
-    [body1 body2]))
-
-
+  "Returns a sequence of pairs of entities that are potentially colliding."
+  [entities]
+  ;; TODO: use sequence partitioning to avoid checking the same pair twice?
+  (for [i (range (count entities))
+        j (range (inc i) (count entities))
+        :let [entity1 (nth entities i)
+              entity2 (nth entities j)]
+        :when (not (nil? (collides? (:position entity1) (:collider entity1)
+                                    (:position entity2) (:collider entity2))))]
+    [entity1 entity2]))
