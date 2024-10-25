@@ -60,3 +60,14 @@
         :when (not (nil? (collides? (:position entity1) (:collider entity1)
                                     (:position entity2) (:collider entity2))))]
     [entity1 entity2]))
+
+;; Benchmark for broad-phase function
+(comment
+  (let [num-entities 1000
+        entities (for [i (range num-entities)]
+                   {:position (v/vec2d (rand-int 1000) (rand-int 1000))
+                    :collider {:shape :circle :radius (rand-int 10)}})
+        start-time (System/nanoTime)
+        _ (broad-phase entities)
+        end-time (System/nanoTime)]
+    (println "Broad-phase benchmark:" (/ (- end-time start-time) 1e6) "ms")))
