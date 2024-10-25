@@ -4,10 +4,10 @@
 
 (defn circle-vs-circle?
   "Detects collision between two circles and returns collision info with penetration depth and normal vector."
-  [{:keys [position radius]} {:keys [position radius] :as circle2}]
-  (let [distance-vector (v/subtract (:position circle2) position)
+  [pos1 radius1 pos2 radius2]
+  (let [distance-vector (v/subtract pos2 pos1)
         distance (v/magnitude distance-vector)
-        radius-sum (+ radius (:radius circle2))]
+        radius-sum (+ radius1 radius2)]
     (if (< distance radius-sum)
       {:penetration-depth (- radius-sum distance)
        :normal-vector (v/normalize distance-vector)}
