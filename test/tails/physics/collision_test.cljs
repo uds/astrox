@@ -1,7 +1,17 @@
 (ns tails.physics.collision-test
   (:require [cljs.test :refer-macros [deftest is testing]]
             [tails.physics.collision :as c]
-            [tails.math.vector2d :as v]))
+            [tails.math.vector2d :as v]
+            [tails.physics.core :as p]))
+
+(deftest test-broad-phase
+  (testing "Broad-phase collision detection"
+    (let [entity1 {:position (v/vec2d 0 0) :collider {:shape :circle :radius 1}}
+          entity2 {:position (v/vec2d 1 0) :collider {:shape :circle :radius 1}}
+          entity3 {:position (v/vec2d 3 0) :collider {:shape :circle :radius 1}}
+          entities [entity1 entity2 entity3]
+          collided-pairs (c/broad-phase entities)]
+      (is (= (set collided-pairs) #{[entity1 entity2]})))))
 
 (deftest test-circle-vs-circle?
   (testing "No collision when circles are apart"
