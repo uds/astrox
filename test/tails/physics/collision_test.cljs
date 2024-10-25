@@ -37,7 +37,8 @@
     (let [entity1 {:position (v/vec2d 0 0) :collider {:shape :circle :radius 1}}
           entity2 {:position (v/vec2d 1 0) :collider {:shape :circle :radius 1}}
           entity3 {:position (v/vec2d 3 0) :collider {:shape :circle :radius 1}}
-          entities [entity1 entity2 entity3]
+          entity4 {:position (v/vec2d 5 0)} ;; entity without collider does not participate in collision detection
+          entities [entity1 entity2 entity3 entity4]
           collided-pairs (#'c/broad-phase entities)]
       (is (= (set collided-pairs) #{[entity1 entity2] [entity2 entity3] [entity1 entity3]})))))
 

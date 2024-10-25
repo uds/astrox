@@ -8,7 +8,8 @@
 (s/def ::penetration number?)
 (s/def ::normal ::v/vector2d)
 (s/def ::collision-info (s/keys :req-un [::penetration ::normal]))
-(s/def ::entity (s/keys :req-un [::c/position ::c/collider]))
+(s/def ::entity (s/keys :req-un [::c/position] 
+                        :opt-un [::c/collider]))
 (s/def ::collider-pairs (s/coll-of (s/tuple ::entity ::entity)))
 
 
@@ -55,7 +56,9 @@
   [entities]
   ;; Converting to vector makes it a bit faster, because drop on vector is faster then on the list
   ;; But it is still probably requires a quad tree optimisation for large number of entities
-  (let [indexed (vec (map-indexed vector entities))]
+  (let [indexed (->> (filter :collider entities)
+                     (map-indexed vector)
+                     (vec))]
     (for [[i entity1] indexed
           [_ entity2] (drop (inc i) indexed)]
       [entity1 entity2])))
