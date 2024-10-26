@@ -58,7 +58,8 @@
   (px/destroy-app app))
 
 (defn- update-world
-  "Update ECS world by processing player input and executing given systems against the current state of the world."
+  "Update ECS world by processing player input and executing given systems against the current state of the world.
+   Returns the updated world."
   [world systems delta-time delta-frame]
   (-> (process-input world)
       (ecs/systems-tick systems delta-time delta-frame)))

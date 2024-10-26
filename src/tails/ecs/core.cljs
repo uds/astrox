@@ -293,7 +293,7 @@
   "Executes the provided system functions for components that have been updated and returns the updated world state.
    The 'systems' parameter is a map where each key is a component type, and the value is a list of system tick functions:
    { ComponentType -> [ (fn system-fn [component eid world delta delta-frame] ...) ] }.
-   Each 'system-fn' processes a component and may return an updated instance of it.
+   Each 'system-fn' processes a component and returns an (possibly updated) instance of it.
    System functions are invoked only for components that have changed since the last frame.
    This ensures that only modified components are processed, optimizing performance.
    Returns the updated world state."
@@ -315,7 +315,7 @@
    The 'systems' parameter is a map where each key is a component type, and the value is a system tick function:
    { ComponentType -> (fn system-fn [components-map world delta delta-frame] ...) }.
    Here, 'components-map' is a map of all components indexed by entity ID: { EntityId -> ComponentInstance }.
-   Each 'system-fn' processes components and returns only those that have changed as a map { EntityId -> ComponentInstance }.
+   Each 'system-fn' processes components and returns only those that have changed, as a map { EntityId -> ComponentInstance }.
    Returns the updated world state."
   [world systems delta-time delta-frame]
   (reduce-kv (fn [world comp-type system-fn]
