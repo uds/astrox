@@ -118,7 +118,10 @@
   (is (= (v/vec2d 1 2) (v/negate (v/vec2d -1 -2))))
   (is (= (v/vec2d 0 0) (v/negate (v/vec2d 0 0)))))
 
-(deftest rand-in-circle
+(deftest dot
+  (is (= 11 (v/dot (v/vec2d 1 2) (v/vec2d 3 4))))
+  (is (= 0 (v/dot (v/vec2d 1 0) (v/vec2d 0 1))))
+  (is (= -11 (v/dot (v/vec2d -1 -2) (v/vec2d 3 4)))))
   (let [c (v/vec2d 2 3)
         r 5]
     (dotimes [_ 100]
