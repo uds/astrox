@@ -290,13 +290,13 @@
   :ret ::world)
 
 (defn systems-tick
-  "Executes given systems (functions) for updated components and returns an updated world.
-   The 'systems' argument is a map of a list of system tick functions keyed by the component type:
-   { ComponentType -> [ (fn system-fn [component eid world delta delta-frame] ...) ] }
-   'system-fn' returns an (possibly updated) component instance.
-   Whenever a component of the given type has changed since the last frame, associated with that component system tick functions
-   are called. The system tick function returns an updated component instance.
-   Returns updated version of the world."
+  "Executes the provided system functions for components that have been updated and returns the updated world state.
+   The 'systems' parameter is a map where each key is a component type, and the value is a list of system tick functions:
+   { ComponentType -> [ (fn system-fn [component eid world delta delta-frame] ...) ] }.
+   Each 'system-fn' processes a component and may return an updated instance of it.
+   System functions are invoked only for components that have changed since the last frame.
+   This ensures that only modified components are processed, optimizing performance.
+   Returns the updated world state."
   [world systems delta-time delta-frame]
   (if-let [upd-components (not-empty (:updated-components world))]
     ;; clear a list of all updated and removed components
