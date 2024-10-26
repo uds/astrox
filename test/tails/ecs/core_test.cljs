@@ -173,3 +173,4 @@
     (is (= [e1 e3] (ecs/entities-with-component world Comp1)))
     (is (= [e2 e3] (ecs/entities-with-component world Comp2)))
     (is (nil? (ecs/entities-with-component world Comp3)))))
+
