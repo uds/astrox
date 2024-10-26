@@ -310,13 +310,13 @@
 
 
 (defn systems-by-component-tick
-  "Executes given systems for _all_ components of the type associated with each system and returns an updated world.
-   One of the usages is to scan all rigid body components and compute collisions between them.
-   The 'systems' argument is a map of system tick functions keyed by the component type:
-   { ComponentType -> (fn system-fn [components-map world delta delta-frame] ...) },
-   where 'components-map' is a map of all components by entity ID: { EntityId -> ComponentInstance }.
-   'system-fn' returns only changed components as a map { EntityId -> ComponentInstance }.
-   Returns updated version of the world."
+  "Executes the specified systems for all components of each associated type and returns the updated world state.
+   This function is useful for operations like scanning all rigid body components to compute collisions.
+   The 'systems' parameter is a map where each key is a component type, and the value is a system tick function:
+   { ComponentType -> (fn system-fn [components-map world delta delta-frame] ...) }.
+   Here, 'components-map' is a map of all components indexed by entity ID: { EntityId -> ComponentInstance }.
+   Each 'system-fn' processes components and returns only those that have changed as a map { EntityId -> ComponentInstance }.
+   Returns the updated world state."
   [world systems delta-time delta-frame]
   (reduce-kv (fn [world comp-type system-fn]
                (if-let [comp-map (get-in world [:components comp-type])]
