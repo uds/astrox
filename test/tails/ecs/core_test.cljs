@@ -186,10 +186,11 @@
         world (-> (ecs/add-entity {} e1 [c1])
                   (ecs/add-entity e2 [c2]))
         systems {c1-type [(fn [component _ _ _ _] (Comp1. (+ 5 (.-x component))))]
-                 c2-type [(fn [component _ _ _ _] (Comp2. (* 2 (.-x component))))]}]
-    
-    ;; Execute systems-tick
-    (let [updated-world (ecs/systems-tick world systems 0.016 1)]
-      (is (= (Comp1. 15) (ecs/component updated-world e1 Comp1)))
-      (is (= (Comp2. 40) (ecs/component updated-world e2 Comp2))))))
+                 c2-type [(fn [component _ _ _ _] (Comp2. (* 2 (.-x component))))]}
+
+        ;; Execute systems-tick
+        updated-world (ecs/systems-tick world systems 0.016 1)]
+
+    (is (= (Comp1. 15) (ecs/component updated-world e1 Comp1)))
+    (is (= (Comp2. 40) (ecs/component updated-world e2 Comp2)))))
 
