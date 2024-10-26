@@ -4,10 +4,11 @@
             [tails.physics.core :as p]
             [tails.math.vector2d :as v]
             [tails.math.core :as math]
+            [tails.physics.collision :as cn]
             [astrox.ecs.components :as c]
             [astrox.ecs.views.protocols :as vp]))
 
-(def ^:private debug-show-colliders true)
+(def ^:private debug-show-colliders false)
 
 (defn- render-new-entity-system
   "Renders entity's view once an entity with the View component is created. 
@@ -21,11 +22,11 @@
 
     (vp/set-position view-obj position)
     (vp/set-orientation view-obj orientation)
-    
+
     ;; FIXME: make it polymorphic
     (when (and debug-show-colliders (satisfies? vp/Debuggable view-obj))
       (vp/show-collider view-obj))
-    
+
     view))
 
 
@@ -50,10 +51,34 @@
     rigid-body))
 
 
+(defn- collisions-system
+  "Executes collision detection and resolution for the RigidBody components of entities.
+   Returns updated rigid-body objects as components map { EntityId -> ComponentInstance }."
+  [rigid-bodies-map]
+  (let [entities (map (fn [[k v]] (assoc v :eid k)) rigid-bodies-map)
+        collisions (cn/detect-and-resolve-collisions entities)]
+    (into {}
+          (map (fn [e] [(:eid e) e]) collisions))))
+
+  ;; (let [collisions (cn/detect-and-resolve-collisions (vals rigid-bodies-map))]
+  ;;     (println "collisions:" collisions)
+  ;;     rigid-bodies-map)
+
+
+;;------------------------------------------------------------------------------
+
+
 (defn all-systems
   "Returns a collection of 'system' functions that will be executed on each game loop tick.
-   Each 'system' function handles a specific component of the entity and is defined as (fn [component eid world delta-time delta-frame])."
+   Each 'system' function handles a specific component of the entity and is defined as (fn system-fn [component eid world delta-time delta-frame]).
+   It returns updated component object."
   [scene]
   {c/View      [(partial render-new-entity-system scene)]
    c/RigidBody [physics-system]})
 
+
+(def all-systems-by-component
+  "Returns a collection of 'system' functions that will be executed on each game loop tick.
+   Each 'system' function handles a specific component of the entity and is defined as (fn system-fn [components-map world delta-time delta-frame]).
+   It returns updated components map."
+  {c/RigidBody collisions-system})

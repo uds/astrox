@@ -5,12 +5,21 @@
             [tails.physics.common :as c]))
 
 
-(s/def ::penetration number?)
-(s/def ::normal ::v/vector2d)
-(s/def ::collision-info (s/keys :req-un [::penetration ::normal]))
-(s/def ::entity (s/keys :req-un [::c/position] 
+(s/def ::entity (s/keys :req-un [::c/position
+                                 ::c/velocity
+                                 ::c/restitution
+                                 ::c/restitution]
                         :opt-un [::c/collider]))
 (s/def ::collider-pairs (s/coll-of (s/tuple ::entity ::entity)))
+
+(s/def ::entity1 ::entity)
+(s/def ::entity2 ::entity)
+(s/def ::penetration number?)
+(s/def ::normal ::v/vector2d)
+(s/def ::collision-info (s/keys :req-un [::entity1
+                                         ::entity2
+                                         ::penetration
+                                         ::normal]))
 
 
 (defn- circle-vs-circle?
@@ -41,10 +50,13 @@
         {pos2 :position, {shape2 :shape, radius2 :radius} :collider} entity2]
     (cond
       (and (= shape1 :circle) (= shape2 :circle))
-      (circle-vs-circle? pos1 radius1 pos2 radius2)
+      (when-let [info (circle-vs-circle? pos1 radius1 pos2 radius2)]
+        (assoc info :entity1 entity1 :entity2 entity2))
 
       :else
       (throw (ex-info "Unsupported collider type" {:entity1 entity1, :entity2 entity2})))))
+
+
 
 
 (s/fdef broad-phase
@@ -75,12 +87,36 @@
         collider-pairs))
 
 
-(s/fdef detect-collisions
-  :args (s/cat :entities (s/nilable (s/coll-of ::entity)))
-  :ret (s/nilable (s/coll-of ::collision-info)))
+(s/fdef resolve-collision
+  :args (s/cat :collision ::collision-info)
+  :ret (s/coll-of ::entity))
 
-(defn detect-collisions
-  "Detects collisions among a collection of entities by combining broad-phase and narrow-phase detection."
+(defn- resolve-collision
+  "Resolves collision between two entities by applying impulse to them. 
+   Returns a list of changed entities.
+   Reference: https://code.tutsplus.com/how-to-create-a-custom-2d-physics-engine-the-basics-and-impulse-resolution--gamedev-6331t"
+  [{:keys [entity1 entity2 normal] :as _collision}]
+  (let [rel-vel           (v/sub (:velocity entity2) (:velocity entity1))          ;; relative velocity of entities
+        vel-along-normal  (v/dot rel-vel normal)]                                  ;; velocity along the normal
+    ;; do not resolve if entities are moving away from each other
+    (when (<= vel-along-normal 0)
+      (let [e        (js/Math.min (:restitution entity1) (:restitution entity2))   ;; coefficient of restitution
+            j        (- (* (+ 1 e) vel-along-normal))
+            j        (/ j (+ (:inverse-mass entity1) (:inverse-mass entity2)))     ;; impulse magnitude
+            impulse  (v/mul normal j)]
+        [(c/apply-impulse entity1 (v/negate impulse))
+         (c/apply-impulse entity2 impulse)]))))
+
+
+(s/fdef detect-and-resolve-collisions
+  :args (s/cat :entities (s/nilable (s/coll-of ::entity)))
+  :ret (s/nilable (s/coll-of ::entity)))
+
+(defn detect-and-resolve-collisions
+  "Detects colliding entities and resolves collisions by applying impulse to colliding entities.
+   Returns a list of only changed entities."
   [entities]
-  (-> (broad-phase entities)
-      (narrow-phase)))
+  (let [collisions (-> (broad-phase entities)
+                       (narrow-phase))]
+    (mapcat resolve-collision collisions)))
+  

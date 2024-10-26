@@ -20,7 +20,8 @@
   (let [view (pv/create-player-ship)
         max-health 100
         phys-props {:linear-damping  0.3
-                    :angular-damping 0.5}
+                    :angular-damping 0.5
+                    :inverse-mass    (/ 1 1)}
         eid        (ecs/create-entity)]
     [eid [(c/->Player)
           (c/->View view)
@@ -40,7 +41,8 @@
   [fields]
   (let [view (mv/create-meteor)
         max-health 20
+        phys-props {:inverse-mass    (/ 1 1)}
         eid        (ecs/create-entity)]
     [eid [(c/->View view)
           (c/->Health max-health max-health)
-          (c/new-rigid-body fields)]]))
+          (c/new-rigid-body (merge phys-props fields))]]))

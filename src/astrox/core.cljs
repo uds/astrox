@@ -3,16 +3,14 @@
             [tails.pixi.keyboard :as kbd]
             [tails.rinc.reaction :as r]
             [tails.ecs.core :as ecs]
-            [tails.physics.collision :as cn]
             [tails.debug :refer (debug?)]
             [tails.ui-stats :as stats]
             [astrox.screens.main-screen :refer (main-screen)]
             [astrox.screens.core :refer (load-title-screen)]
             [astrox.screens.state :as state]
             [astrox.ecs.world :as world]
-            [astrox.ecs.components :as c]
             [astrox.ecs.input :refer (process-input)]
-            [astrox.ecs.systems :refer (all-systems)]))
+            [astrox.ecs.systems :refer (all-systems all-systems-by-component)]))
 
 
 (defn- mount-view [view-el]
@@ -62,7 +60,10 @@
    Returns the updated world."
   [world systems delta-time delta-frame]
   (-> (process-input world)
-      (ecs/systems-tick systems delta-time delta-frame)))
+      ;; systems that are executed only for updated components
+      (ecs/systems-tick systems delta-time delta-frame)
+      ;; systems that are executed for all components of specified type
+      (ecs/systems-by-component-tick all-systems-by-component delta-time delta-frame)))
 
 (defn- game-loop
   "Game loop function that is called by the Application.ticker.
@@ -73,10 +74,6 @@
   ;; execute ECS systems and update the world
   (let [delta-time (px/delta-frame->delta-time delta-frame)]
     (swap! world/!ecs-world update-world systems delta-time delta-frame))
-  ;; call collision detection
-  (let [rigid-bodies (ecs/components-of-type @world/!ecs-world c/RigidBody)
-        collisions (cn/detect-collisions rigid-bodies)]
-    (when debug? (println "Collisions:" collisions)))
   (when debug? (stats/end-stats)))
 
 (defn- start-game-loop [scene, ^js ticker]

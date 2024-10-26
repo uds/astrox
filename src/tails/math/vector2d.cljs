@@ -66,7 +66,7 @@
 (s/fdef mul :args (s/cat :v1 ::vector2d, :v2 ::vector2d-or-scalar), :ret ::vector2d)
 
 (defn mul
-  "Multiply two vectors or a scalar to the vector"
+  "Multiply two vectors or multiply a vector by a scalar"
   [v1, v2]
   (vec2d-op * v1 v2))
 
@@ -74,9 +74,17 @@
 (s/fdef div :args (s/cat :v1 ::vector2d, :v2 ::vector2d-or-scalar), :ret ::vector2d)
 
 (defn div
-  "Divide two vectors or a scalar to the vector"
+  "Divide two vectors or divide a vector by a scalar"
   [v1, v2]
   (vec2d-op / v1 v2))
+
+
+(s/fdef dot :args (s/cat :v1 ::vector2d, :v2 ::vector2d), :ret number?)
+
+(defn dot
+  "Returns dot product of two vectors"
+  [{x1 :x y1 :y} {x2 :x y2 :y}]
+  (+ (* x1 x2) (* y1 y2)))
 
 
 (s/fdef length-squared :args (s/cat :v ::vector2d), :ret number?)
@@ -105,7 +113,7 @@
 
 (s/fdef distance :args (s/cat :v1 ::vector2d, :v2 ::vector2d), :ret number?)
 
-(defn distance 
+(defn distance
   "Returns distance between two 2D points"
   [v1 v2]
   (length (sub v2 v1)))
@@ -117,6 +125,14 @@
   "Returns an unit vector - a vector with the same direction but magnitude equal 1."
   [v]
   (div v (length v)))
+
+
+(s/fdef negate :args (s/cat :v ::vector2d), :ret ::vector2d)
+
+(defn negate
+  "Negates the vector"
+  [{x :x y :y}]
+  {:x (- x), :y (- y)})
 
 
 (s/fdef clamp :args (s/cat :v ::vector2d, :max-length (s/nilable number?)), :ret ::vector2d)

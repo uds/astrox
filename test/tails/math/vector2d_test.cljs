@@ -30,6 +30,11 @@
   (is (= (v/vec2d 1 2) (v/div (v/vec2d 2 6) (v/vec2d 2 3))))
   (is (= (v/vec2d 1 3) (v/div (v/vec2d 2 6) 2))))
 
+(deftest dot
+  (is (= 11 (v/dot (v/vec2d 1 2) (v/vec2d 3 4))))
+  (is (= 0 (v/dot (v/vec2d 1 0) (v/vec2d 0 1))))
+  (is (= -11 (v/dot (v/vec2d -1 -2) (v/vec2d 3 4)))))
+
 (deftest length-squared
   (is (= 25 (v/length-squared (v/vec2d 3 4)))))
 
@@ -44,6 +49,11 @@
   (let [n (v/normalize (v/vec2d 3 4))]
     (is (= (v/vec2d (/ 3 5) (/ 4 5)) n))
     (is (= 1 (v/length n)))))
+
+(deftest negate
+  (is (= (v/vec2d -1 -2) (v/negate (v/vec2d 1 2))))
+  (is (= (v/vec2d 1 2) (v/negate (v/vec2d -1 -2))))
+  (is (= (v/vec2d 0 0) (v/negate (v/vec2d 0 0)))))
 
 (deftest clamp
   (let [v1 (v/vec2d 3 4)
@@ -113,15 +123,7 @@
   (is (= (v/vec2d 0 0) (v/zero-if-near (v/vec2d 0.01 0.02) 0.1)))
   (is (= (v/vec2d 0 0.2) (v/zero-if-near (v/vec2d 0.00001 0.2) 0.0001))))
 
-(deftest negate
-  (is (= (v/vec2d -1 -2) (v/negate (v/vec2d 1 2))))
-  (is (= (v/vec2d 1 2) (v/negate (v/vec2d -1 -2))))
-  (is (= (v/vec2d 0 0) (v/negate (v/vec2d 0 0)))))
-
-(deftest dot
-  (is (= 11 (v/dot (v/vec2d 1 2) (v/vec2d 3 4))))
-  (is (= 0 (v/dot (v/vec2d 1 0) (v/vec2d 0 1))))
-  (is (= -11 (v/dot (v/vec2d -1 -2) (v/vec2d 3 4)))))
+(deftest rand-in-circle
   (let [c (v/vec2d 2 3)
         r 5]
     (dotimes [_ 100]
