@@ -176,6 +176,30 @@
 
 ;; --------------------------------------------------------------------------------------------
 
+(deftest test-systems-by-component-tick
+  (let [e1 (ecs/create-entity)
+        e2 (ecs/create-entity)
+        c1 (Comp1. 10)
+        c2 (Comp2. 20)
+        c1-type (ecs/component-type c1)
+        c2-type (ecs/component-type c2)
+        world (-> (ecs/add-entity {} e1 [c1])
+                  (ecs/add-entity e2 [c2]))
+        systems {c1-type (fn [components _ _ _]
+                           (reduce-kv (fn [result eid component]
+                                        (assoc result eid (Comp1. (+ 5 (.-x component)))))
+                                      {} components))
+                 c2-type (fn [components _ _ _]
+                           (reduce-kv (fn [result eid component]
+                                        (assoc result eid (Comp2. (* 2 (.-x component)))))
+                                      {} components))}
+
+        ;; Execute systems-by-component-tick
+        updated-world (ecs/systems-by-component-tick world systems 0.016 1)]
+
+    (is (= (Comp1. 15) (ecs/component updated-world e1 Comp1)))
+    (is (= (Comp2. 40) (ecs/component updated-world e2 Comp2)))))
+
 (deftest test-systems-tick
   (let [e1 (ecs/create-entity)
         e2 (ecs/create-entity)
