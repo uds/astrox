@@ -59,7 +59,7 @@
             torque                    ;; Angular force applied to the character; scalar 
 
             ;; mass
-            inverse-mass              ;; 1/mass in kg; Scalar, default is 1
+            inverse-mass              ;; 1/mass in kg; Scalar, default is 1; 0 means infinite mass
             inverse-inertia           ;; 1/inertia; Scalar, default is 1
 
             ;; material

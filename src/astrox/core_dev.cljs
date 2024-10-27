@@ -7,7 +7,7 @@
 (defn ^:dev/after-load start []
   (core/start)
   ;; NOTE that full SPECS instrumentation will dramatically slow down the game loop
-  (if false 
+  (if true 
     (js/console.log "SPECS instrumented: " (st/instrument))
     (js/console.warn "WARNING: SPECS are NOT instrumented!")))
 

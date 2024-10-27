@@ -58,7 +58,7 @@
   (let [entities (map (fn [[k v]] (assoc v :eid k)) rigid-bodies-map)
         collisions (cn/detect-and-resolve-collisions entities)]
     (when (seq collisions) 
-      (println (map (fn [e] (v/length (:velocity e))) collisions)))
+      (println ">>> collisions: " (map (fn [e] (:velocity e) #_(v/length (:velocity e))) collisions)))
     (into {}
           (map (fn [e] [(:eid e) e]) collisions))))
 

@@ -53,7 +53,6 @@
 
 (defn apply-impulse
   "Applies impulse to the rigid body. Impulse is a force applied for a single frame."
-  [{:keys [velocity
-           inverse-mass] :as rigid-body} impulse]
+  [{:keys [velocity inverse-mass] :as rigid-body} impulse]
   (let [velocity (v/add velocity (v/mul impulse inverse-mass))]
     (assoc rigid-body :velocity velocity)))

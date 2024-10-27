@@ -22,6 +22,10 @@
                                          ::normal]))
 
 
+(s/fdef circle-vs-circle?
+  :args (s/cat :pos1 ::v/vector2d, :radius1 number?, :pos2 ::v/vector2d, :radius2 number?)
+  :ret (s/nilable ::collision-info))
+
 (defn- circle-vs-circle?
   "Detects collision between two circles and returns collision info with penetration depth and normal vector."
   [pos1 radius1 pos2 radius2]
@@ -38,25 +42,23 @@
       nil)))
 
 
-(s/fdef collides?
-  :args (s/cat :entity1 ::entity, :entity2 ::entity)
-  :ret (s/nilable ::collision-info))
-
-(defn- collides?
+(defmulti ^:private collides? 
   "Determines if a collision occurs between two entities based on their position and collider data.
-   Currently supports only circle colliders."
+   Returns [::collision-info] if collision occurs, nil otherwise."
+  (fn [entity1 entity2] 
+    [(-> entity1 :collider :shape) (-> entity2 :collider :shape)]))
+
+;; Check for collision between two circles
+(defmethod collides? [:circle :circle]
+  [entity1 entity2] 
+  (let [{pos1 :position, {radius1 :radius} :collider} entity1
+        {pos2 :position, {radius2 :radius} :collider} entity2]
+    (when-let [info (circle-vs-circle? pos1 radius1 pos2 radius2)]
+      (assoc info :entity1 entity1 :entity2 entity2))))
+
+(defmethod collides? :default
   [entity1 entity2]
-  (let [{pos1 :position, {shape1 :shape, radius1 :radius} :collider} entity1
-        {pos2 :position, {shape2 :shape, radius2 :radius} :collider} entity2]
-    (cond
-      (and (= shape1 :circle) (= shape2 :circle))
-      (when-let [info (circle-vs-circle? pos1 radius1 pos2 radius2)]
-        (assoc info :entity1 entity1 :entity2 entity2))
-
-      :else
-      (throw (ex-info "Unsupported collider type" {:entity1 entity1, :entity2 entity2})))))
-
-
+  (throw (ex-info "Unsupported collider type" {:entity1 entity1, :entity2 entity2})))
 
 
 (s/fdef broad-phase
@@ -89,10 +91,10 @@
 
 (s/fdef resolve-collision
   :args (s/cat :collision ::collision-info)
-  :ret (s/coll-of ::entity))
+  :ret (s/nilable (s/coll-of ::entity)))
 
 (defn- resolve-collision
-  "Resolves collision between two entities by applying impulse to them. 
+  "Resolves collision between two entities by applying collision impulse to them. 
    Returns a list of changed entities.
    Reference: https://code.tutsplus.com/how-to-create-a-custom-2d-physics-engine-the-basics-and-impulse-resolution--gamedev-6331t"
   [{:keys [entity1 entity2 normal] :as _collision}]
@@ -100,16 +102,42 @@
         vel-along-normal  (v/dot rel-vel normal)]                                  ;; velocity along the normal
     ;; do not resolve if entities are moving away from each other
     (when (<= vel-along-normal 0)
-      (let [e        (js/Math.min (:restitution entity1) (:restitution entity2))   ;; coefficient of restitution
-            j        (- (* (+ 1 e) vel-along-normal))
-            j        (/ j (+ (:inverse-mass entity1) (:inverse-mass entity2)))     ;; impulse magnitude
-            impulse  (v/mul normal j)]
-        [(c/apply-impulse entity1 (v/negate impulse))
-         (c/apply-impulse entity2 impulse)]))))
+      (let [{inverse-mass1 :inverse-mass, restitution1 :restitution} entity1
+            {inverse-mass2 :inverse-mass, restitution2 :restitution} entity2]
+        
+        (when (and (zero? inverse-mass1) (zero? inverse-mass2))
+          (throw (ex-info "Collision of entities with  infinite mass" {:entity1 entity1, :entity2 entity2})))
+
+        ;; Note that if relative velocity of overlapped entities is 0, the impulse will also be zero and entity will not move
+        ;; Not sure how to handle this case (if needed at all), but it is not a problem for now.
+        (let [e        (js/Math.min restitution1 restitution2)   ;; coefficient of restitution
+              j        (- (* (+ 1 e) vel-along-normal))
+              j        (/ j (+ inverse-mass1 inverse-mass2))     ;; impulse magnitude
+              impulse  (v/mul normal j)]
+          
+          (println "Impulse:" e j impulse vel-along-normal)
+
+          [(c/apply-impulse entity1 (v/negate impulse))
+           (c/apply-impulse entity2 impulse)])))))
+
+
+(s/fdef sum-multi-collisions
+  :args (s/cat :collided-entities (s/nilable (s/coll-of ::entity)))
+  :ret (s/nilable (s/coll-of ::entity)))
 
 ;; FIXME: handle multiple collisions by combining impulses on the same entity ->
 ;;        sum all impulses and apply them at once on the same entity
 ;;  - check tha this will fix the issue with the ship squeezing between two asteroids
+(defn- sum-multi-collisions
+  "Post-processing step that Sum all impulses and apply them at once on the same entity."
+  [collided-entities]
+  (let [grouped (group-by :eid collided-entities)]
+    (map (fn [[_ entities]]
+              (reduce (fn [entity1 entity2]
+                        (let [velocity (v/add (:velocity entity1) (:velocity entity2))]
+                          (assoc entity1 :velocity velocity)))
+                      entities))
+            grouped)))
 
 
 (s/fdef detect-and-resolve-collisions
@@ -122,5 +150,6 @@
   [entities]
   (let [collisions (-> (broad-phase entities)
                        (narrow-phase))]
-    (mapcat resolve-collision collisions)))
+    (-> (mapcat resolve-collision collisions)
+        (sum-multi-collisions))))
   
