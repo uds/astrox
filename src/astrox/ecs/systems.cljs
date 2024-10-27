@@ -8,7 +8,7 @@
             [astrox.ecs.components :as c]
             [astrox.ecs.views.protocols :as vp]))
 
-(def ^:private debug-show-colliders false)
+(def ^:private debug-show-colliders true)
 
 (defn- render-new-entity-system
   "Renders entity's view once an entity with the View component is created. 
@@ -57,6 +57,8 @@
   [rigid-bodies-map]
   (let [entities (map (fn [[k v]] (assoc v :eid k)) rigid-bodies-map)
         collisions (cn/detect-and-resolve-collisions entities)]
+    (when (seq collisions) 
+      (println (map (fn [e] (v/length (:velocity e))) collisions)))
     (into {}
           (map (fn [e] [(:eid e) e]) collisions))))
 

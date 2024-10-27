@@ -21,7 +21,8 @@
         max-health 100
         phys-props {:linear-damping  0.3
                     :angular-damping 0.5
-                    :inverse-mass    (/ 1 1)}
+                    :inverse-mass    (/ 1 1)
+                    :restitution     0.4}
         eid        (ecs/create-entity)]
     [eid [(c/->Player)
           (c/->View view)
@@ -41,7 +42,8 @@
   [fields]
   (let [view (mv/create-meteor)
         max-health 20
-        phys-props {:inverse-mass    (/ 1 1)}
+        phys-props {:inverse-mass    (/ 1 100)
+                    :restitution     1}
         eid        (ecs/create-entity)]
     [eid [(c/->View view)
           (c/->Health max-health max-health)

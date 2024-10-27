@@ -107,6 +107,10 @@
         [(c/apply-impulse entity1 (v/negate impulse))
          (c/apply-impulse entity2 impulse)]))))
 
+;; FIXME: handle multiple collisions by combining impulses on the same entity ->
+;;        sum all impulses and apply them at once on the same entity
+;;  - check tha this will fix the issue with the ship squeezing between two asteroids
+
 
 (s/fdef detect-and-resolve-collisions
   :args (s/cat :entities (s/nilable (s/coll-of ::entity)))

@@ -6,7 +6,7 @@
 
 (defn- create-random-meteor []
   (e/create-meteor {:position    (v/rand-in-circle (v/vec2d 400 400) 350)
-                    :force       (->> (math/rand-num 500 1500)
+                    :force       (->> (math/rand-num 50000 150000)
                                       (v/rand-in-circle v/zero))
                     :torque      (math/rand-num 10 70)}))
 
