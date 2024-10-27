@@ -46,7 +46,7 @@
   [fields]
   (let [view (mv/create-meteor)
         max-health 20
-        phys-props {:inverse-mass    (/ 1 100)
+        phys-props {:inverse-mass    (/ 1 1000)
                     :restitution     1}
         eid        (ecs/create-entity)]
     [eid [(c/->View view)

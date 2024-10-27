@@ -42,15 +42,15 @@
       nil)))
 
 
-(defmulti ^:private collides? 
+(defmulti ^:private collides?
   "Determines if a collision occurs between two entities based on their position and collider data.
    Returns [::collision-info] if collision occurs, nil otherwise."
-  (fn [entity1 entity2] 
+  (fn [entity1 entity2]
     [(-> entity1 :collider :shape) (-> entity2 :collider :shape)]))
 
 ;; Check for collision between two circles
 (defmethod collides? [:circle :circle]
-  [entity1 entity2] 
+  [entity1 entity2]
   (let [{pos1 :position, {radius1 :radius} :collider} entity1
         {pos2 :position, {radius2 :radius} :collider} entity2]
     (when-let [info (circle-vs-circle? pos1 radius1 pos2 radius2)]
@@ -88,6 +88,48 @@
   (keep (fn [[entity1 entity2]] (collides? entity1 entity2))
         collider-pairs))
 
+(defn- positional-correction
+  "Proportional correction of the position of the entities to avoid 'sinking objects' effect.
+   It should be applied after the collision resolution.
+   Returns list of entities with updated positions.
+   Reference: https://code.tutsplus.com/how-to-create-a-custom-2d-physics-engine-the-basics-and-impulse-resolution--gamedev-6331t"
+  [entity1 entity2 penetration normal]
+  (let [percent 0.5      ;; usually 20% t o 80% is enough
+        slop    0.01     ;; usually 0.01 to 0.1 is enough
+        inv-mass1 (:inverse-mass entity1)
+        inv-mass2 (:inverse-mass entity2)
+        pen (js/Math.max (- penetration slop) 0)
+        inv-mass-sum (* percent (+ inv-mass1 inv-mass2))
+        correction (v/mul normal (/ pen inv-mass-sum))
+        apply-pos-correction (fn [pos inv-mass]
+                               (v/add pos (v/mul correction inv-mass)))]
+    [(update entity1 :position apply-pos-correction (- inv-mass1))
+     (update entity2 :position apply-pos-correction inv-mass2)]))
+
+(defn- calculate-velocity-along-normal
+  "Calculates velocity of entity along the normal vector. 
+   Returns nil if entities are moving away from each other."
+  [entity1 entity2 normal]
+  (let [rel-vel           (v/sub (:velocity entity2) (:velocity entity1))          ;; relative velocity of entities
+        vel-along-normal  (v/dot rel-vel normal)]                                  ;; velocity along the normal
+    ;; Do not resolve if entities are moving away from each other or do not move.
+    ;; Note that if relative velocity of overlapped entities is 0, the impulse will also be zero and entity will not move
+    ;; Not sure how to handle this case (if needed at all), but it is not a problem for now.
+    (if (<= vel-along-normal 0) vel-along-normal nil)))
+
+(defn- calculate-collision-impulses
+  "Calculates impulse for two colliding entities. Returns an impulse magnitude."
+  [entity1 entity2 vel-along-normal]
+  (let [{inv-mass1 :inverse-mass, rest1 :restitution} entity1
+        {inv-mass2 :inverse-mass, rest2 :restitution} entity2]
+    (when (and (zero? inv-mass1) (zero? inv-mass2))
+      (throw (ex-info "Collision of entities with  infinite mass" {:entity1 entity1, :entity2 entity2})))
+
+    (let [e        (js/Math.min rest1 rest2)          ;; coefficient of restitution
+          j        (- (* (+ 1 e) vel-along-normal))
+          j        (/ j (+ inv-mass1 inv-mass2))]     ;; impulse magnitude
+      j)))
+
 
 (s/fdef resolve-collision
   :args (s/cat :collision ::collision-info)
@@ -95,30 +137,15 @@
 
 (defn- resolve-collision
   "Resolves collision between two entities by applying collision impulse to them. 
-   Returns a list of changed entities.
+   Returns a list of changed entities or nil.
    Reference: https://code.tutsplus.com/how-to-create-a-custom-2d-physics-engine-the-basics-and-impulse-resolution--gamedev-6331t"
-  [{:keys [entity1 entity2 normal] :as _collision}]
-  (let [rel-vel           (v/sub (:velocity entity2) (:velocity entity1))          ;; relative velocity of entities
-        vel-along-normal  (v/dot rel-vel normal)]                                  ;; velocity along the normal
-    ;; do not resolve if entities are moving away from each other
-    (when (<= vel-along-normal 0)
-      (let [{inverse-mass1 :inverse-mass, restitution1 :restitution} entity1
-            {inverse-mass2 :inverse-mass, restitution2 :restitution} entity2]
-        
-        (when (and (zero? inverse-mass1) (zero? inverse-mass2))
-          (throw (ex-info "Collision of entities with  infinite mass" {:entity1 entity1, :entity2 entity2})))
-
-        ;; Note that if relative velocity of overlapped entities is 0, the impulse will also be zero and entity will not move
-        ;; Not sure how to handle this case (if needed at all), but it is not a problem for now.
-        (let [e        (js/Math.min restitution1 restitution2)   ;; coefficient of restitution
-              j        (- (* (+ 1 e) vel-along-normal))
-              j        (/ j (+ inverse-mass1 inverse-mass2))     ;; impulse magnitude
-              impulse  (v/mul normal j)]
-          
-          (println "Impulse:" e j impulse vel-along-normal)
-
-          [(c/apply-impulse entity1 (v/negate impulse))
-           (c/apply-impulse entity2 impulse)])))))
+  [{:keys [entity1 entity2 penetration normal] :as _collision}]
+  (when-let [vel-along-normal (calculate-velocity-along-normal entity1 entity2 normal)]
+    (let [j (calculate-collision-impulses entity1 entity2 vel-along-normal)
+          impulse (v/mul normal j)
+          e1 (c/apply-impulse entity1 (v/negate impulse))
+          e2 (c/apply-impulse entity2 impulse)]
+      (positional-correction e1 e2 penetration normal))))
 
 
 (s/fdef sum-multi-collisions
@@ -133,11 +160,11 @@
   [collided-entities]
   (let [grouped (group-by :eid collided-entities)]
     (map (fn [[_ entities]]
-              (reduce (fn [entity1 entity2]
-                        (let [velocity (v/add (:velocity entity1) (:velocity entity2))]
-                          (assoc entity1 :velocity velocity)))
-                      entities))
-            grouped)))
+           (reduce (fn [entity1 entity2]
+                     (let [velocity (v/add (:velocity entity1) (:velocity entity2))]
+                       (assoc entity1 :velocity velocity)))
+                   entities))
+         grouped)))
 
 
 (s/fdef detect-and-resolve-collisions
